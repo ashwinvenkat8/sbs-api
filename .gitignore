@@ -1,3 +1,14 @@
+# OS files
+.DS_Store
+*.ini
+
+# IDE files
+.vscode/
+.idea/
+*.iws
+*.iml
+*.ipr
+
 # Logs
 logs
 *.log
