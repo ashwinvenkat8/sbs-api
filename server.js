@@ -5,6 +5,7 @@ const https = require('https');
 const http = require('http');
 const helmet = require('helmet');
 const authRouter = require('./routes/accounts');
+const dbconnect = require('./mongo/dbconnect');
 require('dotenv').config({ path: `./.env` });
 
 dbconnect();
@@ -15,6 +16,7 @@ app.use(cors({
     origin: "*",
     credentials: false
 }));
+app.use(helmet())
 app.use(express.json());
 app.use((req, res, next) => {
     if (req.headers['x-forwarded-proto'] !== 'https' && process.env.APP_ENV === 'prod') {
