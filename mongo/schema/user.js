@@ -14,8 +14,8 @@ const userSchema = new mongoose.Schema({
         type: Object,
         default: {}
     },
-    groups: {
-        type: Array,
+    permissions: {
+        type: Object,
         default: []
     },
     isActive: {

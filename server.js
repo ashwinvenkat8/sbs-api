@@ -4,8 +4,10 @@ const fs = require('fs');
 const https = require('https');
 const http = require('http');
 const helmet = require('helmet');
+
 const authRouter = require('./routes/accounts');
 const dbconnect = require('./mongo/dbconnect');
+
 require('dotenv').config({ path: `./.env` });
 
 dbconnect();
@@ -38,6 +40,8 @@ app.use((err, req, res, next) => {
     res.status(500).send('Internal Server Error');
 });
 
+
+app.listen(443);
 const options = {
     key: fs.readFileSync(process.env.CERT_PKEY),
     cert: fs.readFileSync(process.env.CERT_FILE)
