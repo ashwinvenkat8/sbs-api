@@ -8,7 +8,11 @@ Built with **Express.js 4.18.3**
     APP_ENV=<ENV>
     APP_PORT=<PORT>
     MONGO_URI=<DB_CONNECTION_STRING>
+    CERT_PKEY=<PATH_TO_PKEY>
+    CERT_FILE=<PATH_TO_CERT>
+    SECRET_KEY=<YOUR_SECRET>
     ```
+    _Note: Secret key can be generated using `openssl`._
 
 2. Install dependencies: `npm install`
 
