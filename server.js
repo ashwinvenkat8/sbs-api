@@ -1,24 +1,37 @@
-const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const https = require('https');
-const http = require('http');
+const express = require('express');
+const fs = require('node:fs');
+const https = require('node:https');
+const http = require('node:http');
 const helmet = require('helmet');
 
-const authRouter = require('./routes/accounts');
-const dbconnect = require('./mongo/dbconnect');
+const { notFoundHandler, serverErrorHandler } = require('./middleware/handler');
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+const transactionRoutes = require('./routes/transaction');
+const connectDb = require('./mongo/connectDb');
 
 require('dotenv').config({ path: `./.env` });
 
-dbconnect();
+connectDb();
 
+const API_BASE = '/api/v1';
 const app = express();
+
+// TODO: Review these settings for security
+app.set('case sensitive routing', true);
+app.set('x-powered-by', false);
 
 app.use(cors({
     origin: "*",
     credentials: false
 }));
-app.use(helmet())
+
+// Express.js also provides a method to reduce fingerprinting: app.disable('x-powered-by');
+// (https://stackoverflow.com/questions/5867199/cant-get-rid-of-header-x-powered-byexpress/12484642#12484642)
+// We are using Helmet.js (https://helmetjs.github.io/)
+app.use(helmet());
+
 app.use(express.json());
 app.use((req, res, next) => {
     if (req.headers['x-forwarded-proto'] !== 'https' && process.env.APP_ENV === 'prod') {
@@ -33,22 +46,20 @@ app.get('/', (req, res) => {
     });
 });
 
-app.use('/api/auth', authRouter);
+app.use(`${API_BASE}/auth`, authRoutes);
+app.use(`${API_BASE}/user`, userRoutes);
+app.use(`${API_BASE}/transaction`, transactionRoutes);
 
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Internal Server Error');
-});
+app.use(notFoundHandler);
+app.use(serverErrorHandler);
 
-
-app.listen(443);
 const options = {
     key: fs.readFileSync(process.env.CERT_PKEY),
     cert: fs.readFileSync(process.env.CERT_FILE)
 };
 
 https.createServer(options, app).listen(process.env.APP_PORT, () => {
-    console.log(`Server is up and running on port: ${process.env.APP_PORT}!`);
+    console.log(`Server is up and running on port: ${process.env.APP_PORT}`);
 });
 
 http.createServer((req, res) => {
