@@ -4,6 +4,7 @@ const {
     getAllAccounts,
     getAccount,
     deleteAccount,
+    getAllProfiles,
     getProfile,
     updateProfile,
     deleteProfile,
@@ -20,14 +21,18 @@ const {
 const router = express.Router();
 
 router.all('*', authenticate);
+
 router.get('/account/all', isSysAdmin, getAllAccounts);
 router.route('/account/:id')
-    .get(getAccount)
-    .delete(isSysAdmin, deleteAccount);
+.get(getAccount)
+.delete(isSysAdmin, deleteAccount);
+
+router.get('/profile/all', isSysAdmin, getAllProfiles);
 router.route('/profile/:id')
     .get(getProfile)
     .patch(updateProfile)
     .delete(isSysAdmin, deleteProfile);
+
 router.post('/review/request', isSysMgr, requestTxnReview);
 router.post('/review/authorize', isExternal, authorizeTxnReview);
 

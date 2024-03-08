@@ -38,8 +38,10 @@ const register = async (req, res, next) => {
         });
         await newUser.save();
         
-        let newAccount = new Account({ user: newUser._id });
-        await newAccount.save();
+        if(newUser.role === 'customer' || newUser.role === 'merchant') {
+            let newAccount = new Account({ user: newUser._id });
+            await newAccount.save();
+        }
 
         return res.status(201).json({ message: 'User registered successfully' });
 
@@ -61,6 +63,10 @@ const login = async (req, res, next) => {
         const passwordMatch = await userInDb.comparePassword(password);
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Incorrect password' });
+        }
+
+        if(userInDb.sessions.length >= 3) {
+            return res.status(401).json({ message: 'Only 3 active sessions are allowed at a time.'});
         }
 
         const currentSession = {
@@ -88,30 +94,16 @@ const login = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
-    const token = req.token || req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ message: 'Missing token' });
-    }
-
-    const activeSession = await User.findOne(
-        { sessions: { $elemMatch: { token: token }}},
-        { _id: 0, 'sessions.$': 1 }
-    );
-    if(!activeSession) {
-        return res.status(401).json({ message: 'Not logged in' });
-    }
-    activeSession.sessionId = null;
-    activeSession.token = null;
-    
-    const filter = { _id: req.user._id };
+    const token = req.headers.authorization?.split(' ')[1];
+    const filter = { _id: req.userId };
     const update = { $pull: { sessions: { token: token }}};
     
     try {
-        const result = await User.updateOne(filter, update);
+        await User.updateOne(filter, update);
         return res.status(200).json({ message: 'Logged out' });
 
     } catch(err) {
-        console.log(err.stack);
+        console.error(err.stack);
         next(err);
     }
 };

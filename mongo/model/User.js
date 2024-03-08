@@ -9,35 +9,31 @@ const roles = [
     'system_admin'
 ];
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         unique: true,
         lowercase: true,
-        trim: true,
-        required: true
+        trim: true
     },
     username: {
         type: String,
         unique: true,
         lowercase: true,
         trim: true,
-        maxLength: 20,
-        required: true
+        maxLength: 20
     },
     password: {
         type: String,
         minLength: 12,
-        maxLength: 72,
-        required: true
+        maxLength: 72
     },
     role: {
         type: String,
         enum: {
             values: roles,
             message: 'Invalid role: {VALUE}'
-        },
-        required: true
+        }
     },
     attributes: {
         type: Object,
@@ -61,11 +57,10 @@ const userSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-userSchema.methods.comparePassword = async function (password) {
+UserSchema.methods.comparePassword = async function (password) {
     return bcrypt.compare(password, this.password);
 }
 
-const userModel = mongoose.connection.useDb('USER');
-const user = userModel.model('user', userSchema);
+const User = mongoose.model('User', UserSchema);
 
-module.exports = user;
+module.exports = User;

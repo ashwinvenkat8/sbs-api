@@ -8,20 +8,17 @@ const txnStatus = [
     'rejected'
 ];
 
-const transactionSchema = new mongoose.Schema({
+const TransactionSchema = new mongoose.Schema({
     from: {
         type: mongoose.Types.ObjectId,
-        ref: 'Account',
-        required: true
+        ref: 'Account'
     },
     to: {
         type: mongoose.Types.ObjectId,
-        ref: 'Account',
-        required: true
+        ref: 'Account'
     },
     amount: {
         type: mongoose.Types.Decimal128,
-        required: true,
         default: new mongoose.Types.Decimal128('0.0'),
         get: v => parseFloat(v)
     },
@@ -51,7 +48,6 @@ const transactionSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const transactionModel = mongoose.connection.useDb('TRANSACTION');
-const transaction = transactionModel.model('transaction', transactionSchema);
+const Transaction = mongoose.model('Transaction', TransactionSchema);
 
-module.exports = transaction;
+module.exports = Transaction;
