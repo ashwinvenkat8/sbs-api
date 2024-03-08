@@ -15,6 +15,7 @@ router.all('*', authenticate);
 router.get('/all', isExternalOrSysMgr, getAllTransactions);
 
 router.post('/new', isExternal, createTransaction);
+router.post('/new', createTransaction);
 
 router.route('/:id')
     .get(isExternalOrSysMgr, getTransaction)

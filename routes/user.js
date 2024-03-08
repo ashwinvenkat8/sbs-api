@@ -24,8 +24,8 @@ router.all('*', authenticate);
 
 router.get('/account/all', isSysAdmin, getAllAccounts);
 router.route('/account/:id')
-.get(getAccount)
-.delete(isSysAdmin, deleteAccount);
+    .get(getAccount)
+    .delete(isSysAdmin, deleteAccount);
 
 router.get('/profile/all', isSysAdmin, getAllProfiles);
 router.route('/profile/:id')

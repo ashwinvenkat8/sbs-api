@@ -38,7 +38,7 @@ const register = async (req, res, next) => {
         });
         await newUser.save();
         
-        if(newUser.role === 'customer' || newUser.role === 'merchant') {
+        if(newUser.role === 'CUSTOMER' || newUser.role === 'MERCHANT') {
             let newAccount = new Account({ user: newUser._id });
             await newAccount.save();
         }

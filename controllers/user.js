@@ -96,17 +96,15 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
-        // const updatedUser = await User.validate(req.body);
-
-        // if (!Object.keys(updatedUser).length === 0 && updated.constructor === Object) {
-        //     await updatedUser.save();
-        // }
-
         const validatedUserData = await User.validate(req.body);
         
-        await User.updateOne({ _id: req.userId }, validatedUserData);
+        const userUpdate = await User.updateOne({ _id: req.params.id }, validatedUserData);
 
-        res.status(200).json({ message: 'Profile updated' });
+        if(!userUpdate.acknowledged || userUpdate.modifiedCount !== 1) {
+            return res.status(500).json({ message: 'User profile update failed' });
+        }
+
+        res.status(200).json({ message: 'User profile updated' });
 
     } catch(err) {
         next(err);
@@ -117,7 +115,7 @@ const deleteProfile = async (req, res, next) => {
     try {
         await User.deleteOne({ _id: req.params.id });
 
-        res.status(200).json({ message: 'Profile deleted' });
+        res.status(200).json({ message: 'User profile deleted' });
 
     } catch(err) {
         next(err);

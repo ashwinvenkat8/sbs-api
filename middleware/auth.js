@@ -10,7 +10,7 @@ const authenticate = async (req, res, next) => {
 
     try {
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
-        const userInDb = await User.exists(decodedToken.userId); //{ _id: decodedToken.userId });
+        const userInDb = await User.exists({ _id: decodedToken.userId });
 
         if (!userInDb) {
             return res.status(404).json({ message: 'User not found' });
@@ -40,7 +40,6 @@ const authenticate = async (req, res, next) => {
                     console.log(`Expired token removed from sessions for user ${activeSession._id}`);
 
                 } catch(err) {
-                    console.error(err.stack);
                     next(err);
                 }
             }
@@ -58,7 +57,7 @@ const isSysAdmin = async (req, res, next) => {
         return res.status(401).json({ message: 'Unauthenticated' });
     }
 
-    if(req.userRole !== 'system_admin') {
+    if(req.userRole !== 'SYSTEM_ADMIN') {
         return res.status(403).json({ message: 'Access denied' });
     }
     
@@ -71,7 +70,7 @@ const isSysMgr = async (req, res, next) => {
         return res.status(401).json({ message: 'Unauthenticated' });
     }
 
-    if(req.userRole !== 'system_manager') {
+    if(req.userRole !== 'SYSTEM_MANAGER') {
         return res.status(403).json({ message: 'Access denied' });
     }
     
@@ -84,7 +83,7 @@ const isExternal = async (req, res, next) => {
         return res.status(401).json({ message: 'Unauthenticated' });
     }
 
-    if(req.userRole !== 'customer' || req.userRole !== 'merchant') {
+    if(req.userRole !== 'CUSTOMER' && req.userRole !== 'MERCHANT') {
         return res.status(403).json({ message: 'Access denied' });
     }
     
@@ -97,7 +96,7 @@ const isExternalOrSysMgr = async (req, res, next) => {
         return res.status(401).json({ message: 'Unauthenticated' });
     }
 
-    const allowedRoles = ['customer', 'merchant', 'system_manager'];
+    const allowedRoles = ['CUSTOMER', 'MERCHANT', 'SYSTEM_MANAGER'];
     if(!allowedRoles.includes(req.userRole)) {
         return res.status(403).json({ message: 'Access denied' });
     }

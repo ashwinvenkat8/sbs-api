@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 
 const txnStatus = [
-    'created',
-    'pending approval',
-    'completed',
-    'cancelled',
-    'rejected'
+    'CREATED',
+    'PENDING APPROVAL',
+    'CANCELLED',
+    'REJECTED',
+    'COMPLETED',
+    'FAILED'
 ];
 
 const TransactionSchema = new mongoose.Schema({
@@ -28,7 +29,7 @@ const TransactionSchema = new mongoose.Schema({
             values: txnStatus,
             message: 'Invalid status: {VALUE}'
         },
-        default: 'created'
+        default: 'CREATED'
     },
     approvedBy: {
         user: {
