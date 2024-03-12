@@ -20,6 +20,12 @@ Built with **Express.js 4.18.3**
 
 3. Run application: `npm run start:dev`
 
+### API Testing using Postman
+
+[Postman](https://www.postman.com/downloads/) can be used to test the APIs before integrating with the front-end. To do so, use the JSON files present in the `postman` directory. First import the `sbs-api.postman_environment.json` file to ensure the required environment variables are available to the requests. Then, import the `sbs-api.postman_collection.json` file to run requests.
+
+If you are not familiar with importing collections and environments to your Postman workspace, refer [Data import and export in Postman | Postman Learning Center](https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-and-exporting-overview/)
+
 ### Build application
 **Command:** `WIP`
 
@@ -34,12 +40,6 @@ Follow [semantic versioning](https://semver.org/) scheme `X.Y.Z` for image `<TAG
 **Docker command:** `docker run --name=<CONTAINER_NAME> [-e <ENV_VAR_NAME>=<ENV_VAR_VALUE>] [-v <HOST_PATH>:<CONTAINER_PATH>] -dp <HOST_PORT>:<CONTAINER_PORT> <IMAGE>:<TAG>`
 
 ***Note:** Provide environment variables and mount required files using `-e` and `-v` options. Refer: [docker run | Docker Docs](https://docs.docker.com/engine/reference/commandline/container_run/)*
-
-### Test APIs using Postman
-
-[Postman](https://www.postman.com/downloads/) can be used to test the APIs before integrating the front-end. To do so, use the JSON files present in the `postman` directory. First import the `sbs-api.postman_environment.json` file to ensure the required environment variables are available to the requests. Then, import the `sbs-api.postman_collection.json` file to run requests.
-
-If you are not familiar with importing collections and environments to your Postman workspace, refer [Data import and export in Postman | Postman Learning Center](https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-and-exporting-overview/)
 
 ### Requirements
 - [MongoDB Atlas](https://mongodb.com/atlas)
