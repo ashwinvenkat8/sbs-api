@@ -53,7 +53,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"test3\",\r\n    \"email\": \"test3@bank.com\",\r\n    \"password\": \"test3!\",\r\n    \"first_name\": \"first3\",\r\n    \"middle_name\": \"middle3\",\r\n    \"last_name\": \"last3\",\r\n    \"date_of_birth\": \"1970-01-02\",\r\n    \"gender\": \"Male\",\r\n    \"ssn\": \"123456791\",\r\n    \"address\": \"address\",\r\n    \"phone_number\": \"+19876543211\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
+									"raw": "{\r\n    \"username\": \"alice01\",\r\n    \"email\": \"alice01@gmail.com\",\r\n    \"password\": \"Iamn0tB0b!\",\r\n    \"first_name\": \"Alice\",\r\n    \"middle_name\": \"Jane\",\r\n    \"last_name\": \"Doe\",\r\n    \"date_of_birth\": \"1989-03-15\",\r\n    \"gender\": \"Feale\",\r\n    \"ssn\": \"200243298\",\r\n    \"address\": \"123 E Lane, Wonderland, CX 32906\",\r\n    \"phone_number\": \"+11235439857\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -87,7 +87,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"test2\",\r\n    \"email\": \"test2@bank.com\",\r\n    \"password\": \"test2!\",\r\n    \"first_name\": \"first2\",\r\n    \"middle_name\": \"middle2\",\r\n    \"last_name\": \"last2\",\r\n    \"date_of_birth\": \"1970-01-02\",\r\n    \"gender\": \"Female\",\r\n    \"ssn\": \"123456790\",\r\n    \"address\": \"address2\",\r\n    \"phone_number\": \"+19876543202\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
+									"raw": "{\r\n    \"username\": \"bob01\",\r\n    \"email\": \"bob01@gmail.com\",\r\n    \"password\": \"Iamn0tAl1ce!\",\r\n    \"first_name\": \"Bob\",\r\n    \"middle_name\": \"John\",\r\n    \"last_name\": \"Doe\",\r\n    \"date_of_birth\": \"1989-01-07\",\r\n    \"gender\": \"Male\",\r\n    \"ssn\": \"200241234\",\r\n    \"address\": \"345 W Lane, Wonderland, CX 32907\",\r\n    \"phone_number\": \"+11235419755\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -155,7 +155,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"test1\",\r\n    \"password\": \"test1!\"\r\n}",
+									"raw": "{\r\n    \"username\": \"alice01\",\r\n    \"password\": \"Iamn0tB0b!\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -189,7 +189,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"test2\",\r\n    \"password\": \"test2!\"\r\n}",
+									"raw": "{\r\n    \"username\": \"bob01\",\r\n    \"password\": \"Iamn0tAl1ce!\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -672,13 +672,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtExternal2}}",
+										"value": "Bearer {{jwtExternal}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"from\": \"65edf951e5c83d73b54cba7b\",\r\n    \"to\": \"65edf673e6f0b56a0cd48766\",\r\n    \"amount\": 300\r\n}",
+									"raw": "{\r\n    \"from\": {{sender}},\r\n    \"to\": {{beneficiary}},\r\n    \"amount\": 300\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
