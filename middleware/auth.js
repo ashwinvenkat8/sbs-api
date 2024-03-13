@@ -5,7 +5,8 @@ const User = require('../mongo/model/User');
 const authenticate = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
-        return res.status(401).json({ message: 'Unauthenticated' });
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
     }
 
     try {
@@ -13,7 +14,8 @@ const authenticate = async (req, res, next) => {
         const userInDb = await User.exists({ _id: decodedToken.userId });
 
         if (!userInDb) {
-            return res.status(404).json({ message: 'User not found' });
+            res.status(404).json({ message: 'User not found' });
+            return;
         }
 
         req.userId = decodedToken.userId;
@@ -44,7 +46,8 @@ const authenticate = async (req, res, next) => {
                 }
             }
             
-            return res.status(401).json({ message: 'Session expired' });
+            res.status(401).json({ message: 'Session expired' });
+            return;
         }
         
         res.status(401).json(err);
@@ -54,11 +57,13 @@ const authenticate = async (req, res, next) => {
 const isSysAdmin = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if(!token) {
-        return res.status(401).json({ message: 'Unauthenticated' });
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
     }
 
     if(req.userRole !== 'SYSTEM_ADMIN') {
-        return res.status(403).json({ message: 'Access denied' });
+        res.status(403).json({ message: 'Access denied' });
+        return;
     }
     
     next();
@@ -67,11 +72,13 @@ const isSysAdmin = async (req, res, next) => {
 const isSysMgr = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if(!token) {
-        return res.status(401).json({ message: 'Unauthenticated' });
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
     }
 
     if(req.userRole !== 'SYSTEM_MANAGER') {
-        return res.status(403).json({ message: 'Access denied' });
+        res.status(403).json({ message: 'Access denied' });
+        return;
     }
     
     next();
@@ -80,11 +87,13 @@ const isSysMgr = async (req, res, next) => {
 const isExternal = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if(!token) {
-        return res.status(401).json({ message: 'Unauthenticated' });
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
     }
 
     if(req.userRole !== 'CUSTOMER' && req.userRole !== 'MERCHANT') {
-        return res.status(403).json({ message: 'Access denied' });
+        res.status(403).json({ message: 'Access denied' });
+        return;
     }
     
     next();
@@ -93,12 +102,14 @@ const isExternal = async (req, res, next) => {
 const isExternalOrSysMgr = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if(!token) {
-        return res.status(401).json({ message: 'Unauthenticated' });
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
     }
 
     const allowedRoles = ['CUSTOMER', 'MERCHANT', 'SYSTEM_MANAGER'];
     if(!allowedRoles.includes(req.userRole)) {
-        return res.status(403).json({ message: 'Access denied' });
+        res.status(403).json({ message: 'Access denied' });
+        return;
     }
     
     next();

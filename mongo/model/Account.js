@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const crypto = require('node:crypto');
 
 const AccountSchema = new mongoose.Schema({
     user: {
@@ -8,7 +7,6 @@ const AccountSchema = new mongoose.Schema({
     },
     accountNumber: {
         type: Number,
-        default: crypto.randomInt(1, 2e+14),
         min: 1,
         unique: true
     },
@@ -20,16 +18,6 @@ const AccountSchema = new mongoose.Schema({
     transactions: [{
         type: mongoose.Types.ObjectId,
         ref: 'Transaction',
-        default: []
-    }],
-    beneficiaries: [{
-        accountNumber: {
-            type: Number
-        },
-        fullName: {
-            type: String
-        },
-        type: Object,
         default: []
     }]
 }, { timestamps: true });

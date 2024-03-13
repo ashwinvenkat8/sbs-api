@@ -1,86 +1,106 @@
+const mongoose = require('mongoose');
 const Account = require('../mongo/model/Account');
 const Transaction = require('../mongo/model/Transaction');
 
 const createTransaction = async (req, res, next) => {
-    try {
-        const validatedBody = await Transaction.validate(req.body);
-        const fieldsToProject = { _id: 1, balance: 1 };
-        let sender = await Account.findOne({ user: validatedBody.from }, fieldsToProject);
-        let beneficiary = await Account.findOne({ user: validatedBody.to }, fieldsToProject);
-        let isAmountValid = parseFloat(validatedBody.amount) > 1;
+    let savedTransaction = null;
 
-        if(!sender || req.userId !== validatedBody.from.toString()) {
-            return res.status(400).json({ message: 'Invalid sender' });
+    try {
+        const fieldsToProject = { _id: 1, user: 1, balance: 1 };
+        const sender = await Account.findOne({ accountNumber: req.body.from }, fieldsToProject);
+        const beneficiary = await Account.findOne({ accountNumber: req.body.to }, fieldsToProject);
+        let isAmountValid = parseFloat(req.body.amount) > 1;
+
+        if(!sender || req.userId !== sender.user.toString()) {
+            res.status(400).json({ message: 'Invalid sender' });
+            return;
         }
         if(!beneficiary) {
-            return res.status(400).json({ message: 'Invalid beneficiary' });
+            res.status(400).json({ message: 'Invalid beneficiary' });
+            return;
         }
         if(!isAmountValid) {
-            return res.status(400).json({ message: 'Invalid amount' });
+            res.status(400).json({ message: 'Invalid amount' });
+            return;
         }
 
-        const newTransaction = new Transaction({
-            from: sender._id,
-            to: beneficiary._id,
-            amount: validatedBody.amount,
-            status: 'CREATED',
-            createdBy: sender._id
+        const dbSession = await mongoose.startSession();
+        dbSession.withTransaction(async () => {
+            const newTransaction = new Transaction({
+                from: sender._id,
+                to: beneficiary._id,
+                amount: req.body.amount,
+                status: 'CREATED',
+                createdBy: sender.user
+            });
+    
+            if(parseFloat(req.body.amount) >= 10000) {
+                newTransaction.status = 'PENDING APPROVAL';
+            }
+    
+            savedTransaction = await newTransaction.save();
+            
+            let updatedSenderBalance = parseFloat(sender.balance) - parseFloat(req.body.amount);
+            if(updatedSenderBalance < 0) {
+                await savedTransaction.updateOne({ status: 'CANCELLED' }).session(dbSession);
+                res.status(400).json({ message: 'Insufficient balance in sender\'s account' });
+                return;
+            }
+    
+            /**
+             * TODO: Implement high value transaction authorization mechanism
+            */
+    
+            const debitFromSender = await Account.updateOne({ _id: sender._id }, { balance: updatedSenderBalance }).session(dbSession);
+            if(!debitFromSender.acknowledged || debitFromSender.modifiedCount !== 1) {
+                await savedTransaction.updateOne({ status: 'FAILED' }).session(dbSession);
+                
+                // Restore balance
+                // await Account.updateOne({ _id: sender._id }, { balance: sender.balance });
+                await dbSession.abortTransaction();
+                
+                res.status(500).json({ error: 'Transaction failed' });
+                return;
+            }
+            
+            let updatedBeneficiaryBalance = parseFloat(beneficiary.balance) + parseFloat(req.body.amount);
+            
+            const creditToBeneficiary = await Account.updateOne({ _id: beneficiary._id }, { balance: updatedBeneficiaryBalance }).session(dbSession);
+            if(!creditToBeneficiary.acknowledged || creditToBeneficiary.modifiedCount !== 1) {
+                await savedTransaction.updateOne({ status: 'FAILED' }).session(dbSession);
+                
+                // Restore balances
+                // await Account.updateOne({ _id: sender._id }, { balance: sender.balance });
+                // await Account.updateOne({ _id: beneficiary._id }, { balance: beneficiary.balance });
+                await dbSession.abortTransaction();
+                
+                res.status(500).json({ error: 'Transaction failed' });
+                return;
+            }
+
+            await savedTransaction.updateOne({ status: 'COMPLETED' }).session(dbSession);
+            res.status(200).json({ message: 'Transaction completed' });
         });
-
-        if(parseFloat(validatedBody.amount) >= 10000) {
-            newTransaction.status = 'PENDING APPROVAL';
-        }
-
-        const savedTransaction = await newTransaction.save();
         
-        let updatedSenderBalance = parseFloat(sender.balance) - parseFloat(validatedBody.amount);
-        if(updatedSenderBalance < 0) {
-            await savedTransaction.updateOne({ status: 'CANCELLED' });
-            return res.status(400).json({ message: 'Insufficient balance in sender\'s account' });
-        }
-
-        /**
-         * TODO: Implement high value transaction authorization mechanism
-        */
-
-        const debitFromSender = await Account.updateOne({ _id: sender._id }, { balance: updatedSenderBalance });
-        if(!debitFromSender.acknowledged || debitFromSender.modifiedCount !== 1) {
-            await savedTransaction.updateOne({ status: 'FAILED' });
-            
-            // Restore balance
-            await Account.updateOne({ _id: sender._id }, { balance: sender.balance });
-            
-            return res.status(500).json({ error: 'Transaction failed' });
-        }
-        
-        let updatedBeneficiaryBalance = parseFloat(beneficiary.balance) + parseFloat(validatedBody.amount);
-        const creditToBeneficiary = await Account.updateOne({ _id: beneficiary._id }, { balance: updatedBeneficiaryBalance });
-        
-        if(!creditToBeneficiary.acknowledged || creditToBeneficiary.modifiedCount !== 1) {
-            await savedTransaction.updateOne({ status: 'FAILED' });
-            
-            // Restore balances
-            await Account.updateOne({ _id: sender._id }, { balance: sender.balance });
-            await Account.updateOne({ _id: beneficiary._id }, { balance: beneficiary.balance });
-            
-            return res.status(500).json({ error: 'Transaction failed' });
-        }
-
-        await savedTransaction.updateOne({ status: 'COMPLETED' });
-
-        res.status(200).json({ message: 'Transaction completed' });
-
     } catch(err) {
+        await savedTransaction.updateOne({ status: 'FAILED' });
         next(err);
     }
 };
 
 const getAllTransactions = async (req, res, next) => {
     try {
-        const transactions = await Account.findOne({ user: req.userId }, { transactions: 1 });
+        let transactions = null;
+
+        if (req.userRole === 'SYSTEM_MANAGER') {
+            transactions = await Transaction.find({});
+        } else {
+            transactions = await Account.findOne({ user: req.userId }, { transactions: 1 });
+        }
 
         if(!transactions) {
-            return res.status(404).status({ message: 'No transactions found' });
+            res.status(404).status({ message: 'No transactions found' });
+            return;
         }
 
         res.status(200).json(transactions);
@@ -95,7 +115,8 @@ const getTransaction = async (req, res, next) => {
         const transaction = await Transaction.findById(req.params.id);
 
         if(!transaction) {
-            return res.status(404).json({ message: 'Transaction not found' });
+            res.status(404).json({ message: 'Transaction not found' });
+            return;
         }
 
         res.status(200).json(transaction);
@@ -111,7 +132,8 @@ const updateTransaction = async (req, res, next) => {
         
         const txnUpdate = await Transaction.updateOne({ _id: req.params.id }, validatedTxnData);
         if(!txnUpdate.acknowledged || txnUpdate.modifiedCount !== 1) {
-            return res.status(500).json({ message: 'Transaction update failed' });
+            res.status(500).json({ message: 'Transaction update failed' });
+            return;
         }
 
         res.status(200).json({ message: 'Transaction updated' });

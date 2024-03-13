@@ -13,7 +13,8 @@ const register = async (req, res, next) => {
         let emailInDb = await User.findOne({ email: email });
 
         if (emailInDb || usernameInDb) {
-            return res.status(400).json({ message: 'User already exists' });
+            res.status(400).json({ message: 'User already exists' });
+            return;
         }
 
         const attributes = {
@@ -39,11 +40,12 @@ const register = async (req, res, next) => {
         await newUser.save();
         
         if(newUser.role === 'CUSTOMER' || newUser.role === 'MERCHANT') {
-            let newAccount = new Account({ user: newUser._id });
+            const newACNumber = crypto.randomInt(1, 2e+14);
+            let newAccount = new Account({ user: newUser._id, accountNumber: newACNumber });
             await newAccount.save();
         }
 
-        return res.status(201).json({ message: 'User registered successfully' });
+        res.status(201).json({ message: 'User registered successfully' });
 
     } catch (err) {
         console.log(err.stack);
@@ -57,16 +59,19 @@ const login = async (req, res, next) => {
     try {
         const userInDb = await User.findOne({ username });
         if (!userInDb) {
-            return res.status(404).json({ message: 'User not found' });
+            res.status(404).json({ message: 'User not found' });
+            return;
         }
 
         const passwordMatch = await userInDb.comparePassword(password);
         if (!passwordMatch) {
-            return res.status(401).json({ message: 'Incorrect password' });
+            res.status(401).json({ message: 'Incorrect password' });
+            return;
         }
 
         if(userInDb.sessions.length >= 3) {
-            return res.status(401).json({ message: 'Only 3 active sessions are allowed at a time.'});
+            res.status(401).json({ message: 'Only 3 active sessions are allowed at a time.'});
+            return;
         }
 
         const currentSession = {
@@ -85,7 +90,7 @@ const login = async (req, res, next) => {
 
         await User.updateOne(filter, update);
 
-        return res.json({ token: currentSession.token });
+        res.json({ token: currentSession.token });
 
     } catch(err) {
         console.log(err.stack);
@@ -100,7 +105,7 @@ const logout = async (req, res, next) => {
     
     try {
         await User.updateOne(filter, update);
-        return res.status(200).json({ message: 'Logged out' });
+        res.status(200).json({ message: 'Logged out' });
 
     } catch(err) {
         console.error(err.stack);
