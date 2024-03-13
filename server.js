@@ -2,7 +2,6 @@ const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 
-const { notFoundHandler, serverErrorHandler } = require('./middleware/handler');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const transactionRoutes = require('./routes/transaction');
@@ -40,8 +39,15 @@ app.use(`${API_BASE}/auth`, authRoutes);
 app.use(`${API_BASE}/user`, userRoutes);
 app.use(`${API_BASE}/transaction`, transactionRoutes);
 
-app.use(notFoundHandler);
-app.use(serverErrorHandler);
+app.use((req, res, next) => {
+    res.status(404).json({ message: "Route not found" });
+    next();
+});
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: "Internal Server Error" });
+    next(err);
+});
 
 app.listen(process.env.APP_PORT, () => {
     console.log(`Server is up and running on port: ${process.env.APP_PORT}`);
