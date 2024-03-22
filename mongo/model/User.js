@@ -28,6 +28,16 @@ const UserSchema = new mongoose.Schema({
         minLength: 12,
         maxLength: 72
     },
+    otp: {
+        isVerified: {
+            type: Boolean,
+            default: false
+        },
+        secret: {
+            type: String,
+            default: null
+        }
+    },
     role: {
         type: String,
         enum: {

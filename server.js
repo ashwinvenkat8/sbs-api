@@ -2,6 +2,7 @@ const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 
+const statusRoutes = require('./routes/status');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const transactionRoutes = require('./routes/transaction');
@@ -29,12 +30,8 @@ app.use(cors({
 app.use(helmet());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.status(200).json({
-        "status": "UP"
-    });
-});
-
+// App routes
+app.use(`${API_BASE}/status`, statusRoutes);
 app.use(`${API_BASE}/auth`, authRoutes);
 app.use(`${API_BASE}/user`, userRoutes);
 app.use(`${API_BASE}/transaction`, transactionRoutes);

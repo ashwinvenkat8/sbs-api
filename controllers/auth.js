@@ -1,13 +1,15 @@
 const bcrypt = require('bcrypt');
 const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
+const OTPAuth = require("otpauth");
+const encode = require("hi-base32");
 
 const Account = require('../mongo/model/Account');
 const User = require('../mongo/model/User');
 
 const register = async (req, res, next) => {
     const { username, email, password } = req.body;
-    
+
     try {
         let usernameInDb = await User.findOne({ username: username });
         let emailInDb = await User.findOne({ email: email });
@@ -38,8 +40,8 @@ const register = async (req, res, next) => {
             role: req.body.role
         });
         await newUser.save();
-        
-        if(newUser.role === 'CUSTOMER' || newUser.role === 'MERCHANT') {
+
+        if (newUser.role === 'CUSTOMER' || newUser.role === 'MERCHANT') {
             const newACNumber = crypto.randomInt(1, 2e+14);
             let newAccount = new Account({ user: newUser._id, accountNumber: newACNumber });
             await newAccount.save();
@@ -69,8 +71,8 @@ const login = async (req, res, next) => {
             return;
         }
 
-        if(userInDb.sessions.length >= 3) {
-            res.status(401).json({ message: 'Only 3 active sessions are allowed at a time.'});
+        if (userInDb.sessions.length >= 3) {
+            res.status(401).json({ message: 'Only 3 active sessions are allowed at a time.' });
             return;
         }
 
@@ -81,7 +83,7 @@ const login = async (req, res, next) => {
                 role: userInDb.role
             }, process.env.SECRET_KEY, { expiresIn: '30m' })
         };
-        
+
         const filter = { _id: userInDb._id };
         const update = {
             $push: { sessions: currentSession },
@@ -92,31 +94,156 @@ const login = async (req, res, next) => {
 
         res.json({ token: currentSession.token });
 
-    } catch(err) {
+    } catch (err) {
         console.log(err.stack);
         next(err);
     }
 };
 
 const logout = async (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization;
     const filter = { _id: req.userId };
-    const update = { $pull: { sessions: { token: token }}};
-    
+    const update = { $pull: { sessions: { token: token } } };
+
     try {
         await User.updateOne(filter, update);
         res.status(200).json({ message: 'Logged out' });
 
-    } catch(err) {
+    } catch (err) {
         console.error(err.stack);
         next(err);
     }
 };
 
-// TODO: Implement OTP generation function
-// const generateOtp = async (req, res, next) => {};
 
-// TODO: Implement OTP verification function
-// const verifyOtp = async (req, res, next) => {};
+const __generateRandomBase32 = () => {
+    const buffer = crypto.randomBytes(15);
+    const base32 = encode(buffer).replace(/=/g, "").substring(0, 24);
+    return base32;
+};
 
-module.exports = { register, login, logout };
+const generateQR = async (req, res, next) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            res.status(400).send({ error: "Required parameters are missing" });
+            return;
+        }
+
+        const user = await User.findOne({ _id: userId });
+        
+        if (!user) {
+            res.status(404).send({ error: "User not found" });
+            return;
+        }
+
+        const otpSecret = __generateRandomBase32();
+
+        const totp = new OTPAuth.TOTP({
+            issuer: "EasyBank",
+            label: "EasyBank",
+            algorithm: "SHA256",
+            digits: 8,
+            secret: otpSecret,
+        });
+        
+        await User.updateOne(
+            { _id: userId },
+            { $set: { 'otp.secret': otpSecret }}
+        );
+        
+        res.status(200).send({ url: totp.toString() });
+
+    } catch (err) {
+        console.log(err.stack);
+        next(err);
+    }
+};
+
+// Verify OTP for the first time while onboarding a user
+const verifyOTP = async (req, res, next) => {
+    try {
+        const userId = req.userId;
+        const token = req.body.token;
+        
+        if (!userId || !token) {
+            res.status(400).send({ error: 'Required parameters are missing' });
+            return;
+        }
+        
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+            res.status(404).send({ error: 'User not found' });
+            return;
+        }
+
+        const totp = new OTPAuth.TOTP({
+            issuer: "EasyBank",
+            label: "EasyBank",
+            algorithm: "SHA256",
+            digits: 8,
+            secret: user.otp.secret,
+        });
+
+        const verified = totp.validate({ token });
+
+        if (verified == null) {
+            res.status(401).send({ message: false });
+            return;
+        } else {
+            await User.updateOne(
+                { _id: userId },
+                { $set: { 'otp.$.isVerified': true }}
+            );
+            
+            res.status(200).send({ message: true });
+            return;
+        }
+    } catch (err) {
+        console.log(err.stack);
+        next(err);
+    }
+};
+
+// Validate subsequent OTPs while performing sensitive operations
+const validateOTP = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const token = req.body.token;
+        
+        if (!userId || !token) {
+            res.status(400).send({ error: 'Required parameters are missing' });
+            return;
+        }
+        
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+            res.status(404).send({ error: 'User not found' });
+            return;
+        }
+
+        const totp = new OTPAuth.TOTP({
+            issuer: "EasyBank",
+            label: "EasyBank",
+            algorithm: "SHA256",
+            digits: 8,
+            secret: user.otp.secret,
+        });
+
+        const verified = totp.validate({ token });
+
+        if (verified == null) {
+            res.status(401).send({ message: false });
+            return;
+        } else {
+            res.status(200).send({ message: true });
+            return;
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
+};
+
+module.exports = { register, login, logout, generateQR, verifyOTP, validateOTP };
