@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const OTPAuth = require("otpauth");
-const encode = require("hi-base32");
+const { encode } = require("hi-base32");
 
 const Account = require('../mongo/model/Account');
 const User = require('../mongo/model/User');
@@ -114,7 +114,6 @@ const logout = async (req, res, next) => {
         next(err);
     }
 };
-
 
 const __generateRandomBase32 = () => {
     const buffer = crypto.randomBytes(15);
