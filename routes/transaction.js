@@ -1,11 +1,18 @@
 const express = require('express');
 
 const {
-    createTransaction, getAllTransactions, getTransaction,
-    updateTransaction, reviewHVTransaction, authorizeHVTransaction
+    createTransaction,
+    getAllTransactions,
+    getTransaction,
+    updateTransaction,
+    reviewHVTransaction,
+    authorizeHVTransaction
 } = require('../controllers/transaction');
 const {
-    authenticate, isSysMgr, isExternal, isExternalOrSysMgr
+    authenticate,
+    isSysMgr,
+    isExternal,
+    isExternalOrSysMgr
 } = require('../middleware/auth');
 
 const router = express.Router();

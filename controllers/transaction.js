@@ -12,15 +12,15 @@ const createTransaction = async (req, res, next) => {
         let isAmountValid = parseFloat(req.body.amount) > 1;
 
         if(!sender || req.userId !== sender.user.toString()) {
-            res.status(400).json({ message: 'Invalid sender' });
+            res.status(400).json({ error: 'Invalid sender' });
             return;
         }
         if(!beneficiary) {
-            res.status(400).json({ message: 'Invalid beneficiary' });
+            res.status(400).json({ error: 'Invalid beneficiary' });
             return;
         }
         if(!isAmountValid) {
-            res.status(400).json({ message: 'Invalid amount' });
+            res.status(400).json({ error: 'Invalid amount' });
             return;
         }
 
@@ -43,7 +43,7 @@ const createTransaction = async (req, res, next) => {
             let updatedSenderBalance = parseFloat(sender.balance) - parseFloat(req.body.amount);
             if(updatedSenderBalance < 0) {
                 await savedTransaction.updateOne({ status: 'CANCELLED' }).session(dbSession);
-                res.status(400).json({ message: 'Insufficient balance in sender\'s account' });
+                res.status(400).json({ error: 'Insufficient balance in sender\'s account' });
                 return;
             }
     
@@ -99,7 +99,7 @@ const getAllTransactions = async (req, res, next) => {
         }
 
         if(!transactions) {
-            res.status(404).status({ message: 'No transactions found' });
+            res.status(404).status({ error: 'No transactions found' });
             return;
         }
 
@@ -115,7 +115,7 @@ const getTransaction = async (req, res, next) => {
         const transaction = await Transaction.findById(req.params.id);
 
         if(!transaction) {
-            res.status(404).json({ message: 'Transaction not found' });
+            res.status(404).json({ error: 'Transaction not found' });
             return;
         }
 
@@ -132,7 +132,7 @@ const updateTransaction = async (req, res, next) => {
         
         const txnUpdate = await Transaction.updateOne({ _id: req.params.id }, validatedTxnData);
         if(!txnUpdate.acknowledged || txnUpdate.modifiedCount !== 1) {
-            res.status(500).json({ message: 'Transaction update failed' });
+            res.status(500).json({ error: 'Transaction update failed' });
             return;
         }
 

@@ -15,7 +15,7 @@ const register = async (req, res, next) => {
         let emailInDb = await User.findOne({ email: email });
 
         if (emailInDb || usernameInDb) {
-            res.status(400).json({ message: 'User already exists' });
+            res.status(400).json({ error: 'User already exists' });
             return;
         }
 
@@ -67,12 +67,12 @@ const login = async (req, res, next) => {
 
         const passwordMatch = await userInDb.comparePassword(password);
         if (!passwordMatch) {
-            res.status(401).json({ message: 'Incorrect password' });
+            res.status(401).json({ error: 'Incorrect password' });
             return;
         }
 
         if (userInDb.sessions.length >= 3) {
-            res.status(401).json({ message: 'Only 3 active sessions are allowed at a time.' });
+            res.status(401).json({ error: 'Only 3 active sessions are allowed at a time.' });
             return;
         }
 
@@ -140,9 +140,9 @@ const generateQR = async (req, res, next) => {
         const otpSecret = __generateRandomBase32();
 
         const totp = new OTPAuth.TOTP({
-            issuer: "EasyBank",
-            label: "EasyBank",
-            algorithm: "SHA256",
+            issuer: 'EasyBank',
+            label: 'EasyBank',
+            algorithm: 'SHA256',
             digits: 8,
             secret: otpSecret,
         });
@@ -178,9 +178,9 @@ const verifyOTP = async (req, res, next) => {
         }
 
         const totp = new OTPAuth.TOTP({
-            issuer: "EasyBank",
-            label: "EasyBank",
-            algorithm: "SHA256",
+            issuer: 'EasyBank',
+            label: 'EasyBank',
+            algorithm: 'SHA256',
             digits: 8,
             secret: user.otp.secret,
         });
@@ -188,15 +188,15 @@ const verifyOTP = async (req, res, next) => {
         const verified = totp.validate({ token });
 
         if (verified == null) {
-            res.status(401).send({ message: false });
+            res.status(401).send(false);
             return;
         } else {
             await User.updateOne(
                 { _id: userId },
-                { $set: { 'otp.$.isVerified': true }}
+                { $set: { 'otp.isVerified': true }}
             );
-            
-            res.status(200).send({ message: true });
+
+            res.status(200).send(true);
             return;
         }
     } catch (err) {
@@ -222,10 +222,15 @@ const validateOTP = async (req, res) => {
             return;
         }
 
+        if(!user.otp.isVerified) {
+            res.status(401).send({ error: 'Incomplete 2FA enrollment' });
+            return;
+        }
+
         const totp = new OTPAuth.TOTP({
-            issuer: "EasyBank",
-            label: "EasyBank",
-            algorithm: "SHA256",
+            issuer: 'EasyBank',
+            label: 'EasyBank',
+            algorithm: 'SHA256',
             digits: 8,
             secret: user.otp.secret,
         });
@@ -233,10 +238,10 @@ const validateOTP = async (req, res) => {
         const verified = totp.validate({ token });
 
         if (verified == null) {
-            res.status(401).send({ message: false });
+            res.status(401).send(false);
             return;
         } else {
-            res.status(200).send({ message: true });
+            res.status(200).send(true);
             return;
         }
 
