@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "fd00483c-78e8-4e51-9581-9671b61a642e",
 		"name": "sbs-api",
+		"description": "Documented API endpoints for the Secure Banking System (SBS) developed by SyntaxSquad.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "13839086"
 	},
@@ -42,7 +43,8 @@
 										"auth",
 										"register"
 									]
-								}
+								},
+								"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n    \n- email (text): The email address of the user.\n    \n- password (text): The password for the user's account.\n    \n- first_name (text): The first name of the user.\n    \n- middle_name (text): The middle name of the user.\n    \n- last_name (text): The last name of the user.\n    \n- date_of_birth (text): The date of birth of the user.\n    \n- gender (text): The gender of the user.\n    \n- ssn (text): The social security number of the user.\n    \n- address (text): The address of the user.\n    \n- phone_number (text): The phone number of the user.\n    \n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
 							},
 							"response": []
 						},
@@ -76,7 +78,8 @@
 										"auth",
 										"register"
 									]
-								}
+								},
+								"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n    \n- email (text): The email address of the user.\n    \n- password (text): The password for the user's account.\n    \n- first_name (text): The first name of the user.\n    \n- middle_name (text): The middle name of the user.\n    \n- last_name (text): The last name of the user.\n    \n- date_of_birth (text): The date of birth of the user.\n    \n- gender (text): The gender of the user.\n    \n- ssn (text): The social security number of the user.\n    \n- address (text): The address of the user.\n    \n- phone_number (text): The phone number of the user.\n    \n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
 							},
 							"response": []
 						},
@@ -110,7 +113,8 @@
 										"auth",
 										"register"
 									]
-								}
+								},
+								"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n- email (text): The email address of the user.\n- password (text): The password for the user's account.\n- first_name (text): The first name of the user.\n- middle_name (text): The middle name of the user.\n- last_name (text): The last name of the user.\n- date_of_birth (text): The date of birth of the user.\n- gender (text): The gender of the user.\n- ssn (text): The social security number of the user.\n- address (text): The address of the user.\n- phone_number (text): The phone number of the user.\n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
 							},
 							"response": []
 						},
@@ -144,7 +148,8 @@
 										"auth",
 										"login"
 									]
-								}
+								},
+								"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- `token` (string): A JWT for the authenticated user."
 							},
 							"response": []
 						},
@@ -178,7 +183,8 @@
 										"auth",
 										"login"
 									]
-								}
+								},
+								"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- `token` (string): A JWT for the authenticated user."
 							},
 							"response": []
 						},
@@ -212,7 +218,8 @@
 										"auth",
 										"login"
 									]
-								}
+								},
+								"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n- Content-Type: application/json\n- `token` (string): A JWT for the authenticated user."
 							},
 							"response": []
 						},
@@ -223,7 +230,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtInternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -243,7 +250,8 @@
 										"auth",
 										"logout"
 									]
-								}
+								},
+								"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n- Header:\n    - `Authorization` (string, required): JWT token of the authenticated user.\n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
 							},
 							"response": []
 						},
@@ -254,7 +262,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtExternal}}",
+										"value": "{{jwtExternal}}",
 										"type": "text"
 									}
 								],
@@ -274,7 +282,8 @@
 										"auth",
 										"logout"
 									]
-								}
+								},
+								"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n    \n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n    \n- Header:\n    \n    - `Authorization` (string, required): JWT token of the authenticated user.\n        \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
 							},
 							"response": []
 						},
@@ -285,7 +294,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtExternal2}}",
+										"value": "{{jwtExternal2}}",
 										"type": "text"
 									}
 								],
@@ -305,11 +314,130 @@
 										"auth",
 										"logout"
 									]
-								}
+								},
+								"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n    \n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n    \n- Header:\n    \n    - `Authorization` (string, required): JWT token of the authenticated user.\n        \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "/otp/enroll",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/auth/otp/enroll",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"otp",
+										"enroll"
+									]
+								},
+								"description": "### 2FA Enrollment\n\nThis endpoint is used to enroll a user for 2FA.\n\n#### Request\n\n- Method: `GET`\n- URL: `http://127.0.0.1:5000/api/v1/auth/otp/enroll`\n- Header:\n    - `Authorization` (string, required): JWT token of the authenticated user.\n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"url\": \"otpauth://...\"\n}\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "/otp/verify",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\": \"86864763\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/auth/otp/verify",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"otp",
+										"verify"
+									]
+								},
+								"description": "### Verify OTP\n\nThis endpoint is used to verify the initial OTP to complete the 2FA enrollment.\n\n#### Request\n\n- Method: `POST`\n- URL: `http://127.0.0.1:5000/api/v1/auth/otp/verify`\n- Body:\n    - `token` (string, required): The OTP entered by the user.\n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\ntrue\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "/otp/validate",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\": \"97463305\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/auth/otp/validate",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"otp",
+										"validate"
+									]
+								},
+								"description": "### Validate OTP\n\nThis endpoint is used to validate the OTP entered by the user to perform sensitive operations.\n\n#### Request\n\n- Method: `POST`\n- URL: `http://127.0.0.1:5000/api/v1/auth/otp/validate`\n- Body:\n    - `token` (string, required): The OTP entered by the user.\n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\ntrue\n\n ```"
 							},
 							"response": []
 						}
-					]
+					],
+					"description": "This folder contains the Auth APIs."
 				},
 				{
 					"name": "/user",
@@ -321,7 +449,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtInternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -342,7 +470,8 @@
 										"account",
 										"all"
 									]
-								}
+								},
+								"description": "This request allows a System Manager/Admin to retrieve all accounts."
 							},
 							"response": []
 						},
@@ -353,7 +482,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtExternal}}",
+										"value": "{{jwtExternal}}",
 										"type": "text"
 									}
 								],
@@ -374,7 +503,8 @@
 										"account",
 										"65edf673e6f0b56a0cd48768"
 									]
-								}
+								},
+								"description": "This request retrieves a single account using the Account ID."
 							},
 							"response": []
 						},
@@ -385,7 +515,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtInternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -406,7 +536,8 @@
 										"account",
 										"1"
 									]
-								}
+								},
+								"description": "This request allows the currently authenticated user to raise an account closure request."
 							},
 							"response": []
 						},
@@ -417,7 +548,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtInternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -438,7 +569,8 @@
 										"profile",
 										"all"
 									]
-								}
+								},
+								"description": "This request allows a System Admin to retrieve all user profiles."
 							},
 							"response": []
 						},
@@ -449,7 +581,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtExternal}}",
+										"value": "{{jwtExternal}}",
 										"type": "text"
 									}
 								],
@@ -470,7 +602,8 @@
 										"profile",
 										"65edf673e6f0b56a0cd48766"
 									]
-								}
+								},
+								"description": "This request retrieves a single profile using the User ID."
 							},
 							"response": []
 						},
@@ -481,7 +614,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtExternal}}",
+										"value": "{{jwtExternal}}",
 										"type": "text"
 									}
 								],
@@ -511,7 +644,8 @@
 										"profile",
 										"65edf673e6f0b56a0cd48766"
 									]
-								}
+								},
+								"description": "This request allows the currently authenticated user to update their profile details."
 							},
 							"response": []
 						},
@@ -522,7 +656,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtInternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -543,7 +677,8 @@
 										"profile",
 										"1"
 									]
-								}
+								},
+								"description": "This request allows the currently authenticated user to raise an profile deletion request."
 							},
 							"response": []
 						},
@@ -554,7 +689,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer ",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -584,7 +719,8 @@
 										"review",
 										"request"
 									]
-								}
+								},
+								"description": "#### !!! WIP !!!\n\nThis request allows a System Manager/Admin to raise an account review request."
 							},
 							"response": []
 						},
@@ -595,7 +731,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer ",
+										"value": "{{jwtExternal}}",
 										"type": "text"
 									}
 								],
@@ -625,11 +761,13 @@
 										"review",
 										"authorize"
 									]
-								}
+								},
+								"description": "#### !!! WIP !!!\n\nThis request allows an External user to authorize an account review request."
 							},
 							"response": []
 						}
-					]
+					],
+					"description": "This folder contains the User APIs."
 				},
 				{
 					"name": "/transaction",
@@ -641,7 +779,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtInternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -661,7 +799,8 @@
 										"transaction",
 										"all"
 									]
-								}
+								},
+								"description": "This request retrieves all transactions of the currently authenticated user."
 							},
 							"response": []
 						},
@@ -672,7 +811,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtExternal}}",
+										"value": "{{jwtExternal}}",
 										"type": "text"
 									}
 								],
@@ -701,7 +840,8 @@
 										"transaction",
 										"new"
 									]
-								}
+								},
+								"description": "#### !!! WIP !!!\n\nThis request creates a new transaction."
 							},
 							"response": []
 						},
@@ -712,7 +852,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtExternal2}}",
+										"value": "{{jwtExternal}}",
 										"type": "text"
 									}
 								],
@@ -732,7 +872,8 @@
 										"transaction",
 										"65edfa95e5c83d73b54cba8d"
 									]
-								}
+								},
+								"description": "This request retrieves a single transaction using the transaction ID.\n\n#### !!! Documentation WIP !!!"
 							},
 							"response": []
 						},
@@ -743,7 +884,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{jwtInternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -772,7 +913,8 @@
 										"transaction",
 										"1"
 									]
-								}
+								},
+								"description": "This request allows a System Manager to update a transaction.\n\n#### !!! Documentation WIP !!!"
 							},
 							"response": []
 						},
@@ -783,7 +925,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer ",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -813,7 +955,8 @@
 										"hvTxn",
 										"review"
 									]
-								}
+								},
+								"description": "#### !!! WIP !!!\n\nThis request raises a request for the System Manager to review a high-value transaction."
 							},
 							"response": []
 						},
@@ -824,7 +967,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer ",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
@@ -854,13 +997,126 @@
 										"hvTxn",
 										"authorize"
 									]
-								}
+								},
+								"description": "#### !!! WIP !!!\n\nThis request allows a System Manager to authorize a high-value transaction."
 							},
 							"response": []
 						}
-					]
+					],
+					"description": "This folder contains the Transaction APIs."
+				},
+				{
+					"name": "/status",
+					"item": [
+						{
+							"name": "/",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/status/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"status",
+										""
+									]
+								},
+								"description": "### App Status\n\nThis endpoint retrieves the status information of all services.\n\n#### Request\n\n- Method: `GET`\n    \n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"status\": \"UP\",\n    \"message\": \"All services are up and running\"\n}\n\n ```\n\n---\n\n- Status: `500`\n- Content-Type: `application-json`\n- Data:\n    \n\n```\n{\n    \"status\": \"UNSTABLE\",\n    \"message\": \"One or more services are down\",\n    \"services\": {\n        \"auth\": <status_code>,\n        \"transaction\": <status_code>,\n        \"user\": <status_code>\n    }\n}\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "/status/auth",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/status/auth",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"status",
+										"auth"
+									]
+								},
+								"description": "### Auth API Status\n\nThis endpoint retrieves the status information of the Auth API.\n\n#### Request\n\n- Method: `GET`\n    \n\n#### Response\n\n- Status: `200`\n- Content-Type: `text/plain`\n- Data:\n    \n\n```\nOK\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "/status/transaction",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/status/transaction",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"status",
+										"transaction"
+									]
+								},
+								"description": "### Transaction API Status\n\nThis endpoint retrieves the status information of the Transaction API.\n\n#### Request\n\n- Method: `GET`\n    \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `text/plain`\n    \n- Data:\n    \n\n```\nOK\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "/status/user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/status/user",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"status",
+										"user"
+									]
+								},
+								"description": "### User API Status\n\nThis endpoint retrieves the status information of the User API.\n\n#### Request\n\n- Method: `GET`\n    \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `text/plain`\n    \n- Data:\n    \n\n```\nOK\n\n ```"
+							},
+							"response": []
+						}
+					],
+					"description": "This folder contains the Status APIs."
 				}
-			]
+			],
+			"description": "This folder contains Version 1 of the SBS API."
 		}
 	],
 	"event": [
