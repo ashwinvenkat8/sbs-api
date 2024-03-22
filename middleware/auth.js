@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../mongo/model/User');
 
 const authenticate = async (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization;
     if (!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -55,7 +55,7 @@ const authenticate = async (req, res, next) => {
 };
 
 const isSysAdmin = async (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -70,7 +70,7 @@ const isSysAdmin = async (req, res, next) => {
 };
 
 const isSysMgr = async (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -85,7 +85,7 @@ const isSysMgr = async (req, res, next) => {
 };
 
 const isExternal = async (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -100,7 +100,7 @@ const isExternal = async (req, res, next) => {
 };
 
 const isExternalOrSysMgr = async (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;

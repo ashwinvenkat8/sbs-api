@@ -8,8 +8,8 @@ const router = express.Router();
 router.post('/register', register);
 router.post('/login', login);
 router.post('/logout', authenticate, logout);
-router.get("/generate-qr", authenticate, generateQR);
-router.post("/validate-otp", authenticate, validateOTP);
-router.post("/verify-otp", authenticate, verifyOTP);
+router.get('/otp/enroll', authenticate, generateQR);
+router.post('/otp/verify', authenticate, verifyOTP);
+router.post('/otp/validate', authenticate, validateOTP);
 
 module.exports = router;
