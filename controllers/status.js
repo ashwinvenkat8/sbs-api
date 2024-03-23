@@ -1,18 +1,14 @@
-const __getStatus = async (apiName) => {
-    return await fetch(`${process.env.BASE_URL}/status/${apiName}`, { method: 'GET' });
-};
-
-const __isUP = (response) => {
-    return response.status === 200 && response.body === 'OK';
-};
-
 const appStatus = async (req, res, next) => {
     try {
-        const authResponse = __getStatus(`auth`);
-        const transactionResponse = __getStatus(`transaction`);
-        const userResponse = __getStatus(`user`);
+        const authResponse = await fetch(`${process.env.BASE_URL}/status/auth`, { method: 'GET' });
+        const transactionResponse = await fetch(`${process.env.BASE_URL}/status/transaction`, { method: 'GET' });
+        const userResponse = await fetch(`${process.env.BASE_URL}/status/user`, { method: 'GET' });
 
-        if (__isUP(authResponse) && __isUP(transactionResponse) && __isUP(userResponse)) {
+        if (
+            authResponse.status === 200 &&
+            transactionResponse.status === 200 &&
+            userResponse.status === 200
+        ) {
             res.status(200).json({
                 status: 'UP',
                 message: 'All services are up and running.'
