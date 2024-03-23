@@ -2,11 +2,12 @@ const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 
-const statusRoutes = require('./routes/status');
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/user');
-const transactionRoutes = require('./routes/transaction');
 const connectDb = require('./mongo/connectDb');
+const authRoutes = require('./routes/auth');
+const reviewRoutes = require('./routes/review');
+const statusRoutes = require('./routes/status');
+const transactionRoutes = require('./routes/transaction');
+const userRoutes = require('./routes/user');
 
 require('dotenv').config({ path: `./.env` });
 
@@ -31,10 +32,11 @@ app.use(helmet());
 app.use(express.json());
 
 // App routes
-app.use(`${API_BASE}/status`, statusRoutes);
 app.use(`${API_BASE}/auth`, authRoutes);
-app.use(`${API_BASE}/user`, userRoutes);
+app.use(`${API_BASE}/review`, reviewRoutes);
+app.use(`${API_BASE}/status`, statusRoutes);
 app.use(`${API_BASE}/transaction`, transactionRoutes);
+app.use(`${API_BASE}/user`, userRoutes);
 
 app.use((req, res, next) => {
     res.status(404).json({ message: "Route not found" });
