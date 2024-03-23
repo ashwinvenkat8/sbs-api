@@ -1,8 +1,8 @@
 const appStatus = async (req, res, next) => {
     try {
-        const authResponse = await fetch(`${process.env.BASE_URL}/status/auth`, { method: 'GET' });
-        const transactionResponse = await fetch(`${process.env.BASE_URL}/status/transaction`, { method: 'GET' });
-        const userResponse = await fetch(`${process.env.BASE_URL}/status/user`, { method: 'GET' });
+        const authResponse = await fetch(`${process.env.HEALTHCHECK}/auth`, { method: 'GET' });
+        const transactionResponse = await fetch(`${process.env.HEALTHCHECK}/transaction`, { method: 'GET' });
+        const userResponse = await fetch(`${process.env.HEALTHCHECK}/user`, { method: 'GET' });
 
         if (
             authResponse.status === 200 &&

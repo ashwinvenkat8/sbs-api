@@ -7,12 +7,16 @@ Built with **Express.js 4.18.3**
     ```
     APP_ENV=<ENV>
     APP_PORT=<PORT>
+    API_BASE=<VERSIONED_API_BASE_PATH>
+    HEALTHCHECK=<HEALTHCHECK_API_BASE_PATH>
     MONGO_URI=<DB_CONNECTION_STRING>
     SECRET_KEY=<YOUR_SECRET>
     ```
     where:
     - `APP_ENV` = `dev` or `prod`.
     - `APP_PORT` = `5000` or any other available port.
+    - `API_BASE` = `/api/v1`.
+    - `HEALTHCHECK` = `http://localhost:5000/api/v1/status`.
     - `MONGO_URI` can be found in Atlas.
     - `SECRET_KEY` can be generated using `openssl`.
 
@@ -27,7 +31,7 @@ Built with **Express.js 4.18.3**
 If you are not familiar with importing collections and environments to your Postman workspace, refer [Data import and export in Postman | Postman Learning Center](https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-and-exporting-overview/)
 
 ### Build application
-**Command:** `WIP`
+**Command:** `npm run build`
 
 **Docker command:** `docker build -t <IMAGE>:<TAG> .`
 
@@ -35,7 +39,7 @@ If you are not familiar with importing collections and environments to your Post
 Follow [semantic versioning](https://semver.org/) scheme `X.Y.Z` for image `<TAG>`.*
 
 ### Run application
-**Command:** `WIP`
+**Command:** `npm run start:prod`
 
 **Docker command:** `docker run --name=<CONTAINER_NAME> [-e <ENV_VAR_NAME>=<ENV_VAR_VALUE>] [-v <HOST_PATH>:<CONTAINER_PATH>] -dp <HOST_PORT>:<CONTAINER_PORT> <IMAGE>:<TAG>`
 

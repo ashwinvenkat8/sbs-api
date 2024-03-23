@@ -13,7 +13,6 @@ require('dotenv').config({ path: `./.env` });
 
 connectDb();
 
-const API_BASE = '/api/v1';
 const app = express();
 
 // TODO: Review these settings for security
@@ -32,11 +31,11 @@ app.use(helmet());
 app.use(express.json());
 
 // App routes
-app.use(`${API_BASE}/auth`, authRoutes);
-app.use(`${API_BASE}/review`, reviewRoutes);
-app.use(`${API_BASE}/status`, statusRoutes);
-app.use(`${API_BASE}/transaction`, transactionRoutes);
-app.use(`${API_BASE}/user`, userRoutes);
+app.use(`${process.env.API_BASE}/auth`, authRoutes);
+app.use(`${process.env.API_BASE}/review`, reviewRoutes);
+app.use(`${process.env.API_BASE}/status`, statusRoutes);
+app.use(`${process.env.API_BASE}/transaction`, transactionRoutes);
+app.use(`${process.env.API_BASE}/user`, userRoutes);
 
 app.use((req, res, next) => {
     res.status(404).json({ message: "Route not found" });
