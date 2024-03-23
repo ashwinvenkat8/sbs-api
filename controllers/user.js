@@ -1,5 +1,4 @@
 const Account = require('../mongo/model/Account');
-const Transaction = require('../mongo/model/Transaction');
 const User = require('../mongo/model/User');
 
 const getAllAccounts = async (req, res, next) => {
@@ -46,11 +45,8 @@ const getAccount = async (req, res, next) => {
 
 const deleteAccount = async (req, res, next) => {
     try {
-        const deleteResult = await Account.deleteOne({ _id: req.params.id });
-
-        console.log(deleteResult);
+        await Account.deleteOne({ _id: req.params.id });
         res.status(200).json({ message: 'Account deleted' });
-
     } catch(err) {
         next(err);
     }
@@ -109,17 +105,11 @@ const updateProfile = async (req, res, next) => {
 const deleteProfile = async (req, res, next) => {
     try {
         await User.deleteOne({ _id: req.params.id });
-
         res.status(200).json({ message: 'User profile deleted' });
-
     } catch(err) {
         next(err);
     }
 };
-
-const requestTxnReview = async (req, res, next) => {};
-
-const authorizeTxnReview = async (req, res, next) => {};
 
 module.exports = {
     getAllAccounts,
@@ -128,7 +118,5 @@ module.exports = {
     getAllProfiles,
     getProfile,
     updateProfile,
-    deleteProfile,
-    requestTxnReview,
-    authorizeTxnReview
+    deleteProfile
 };

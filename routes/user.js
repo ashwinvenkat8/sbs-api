@@ -7,9 +7,7 @@ const {
     getAllProfiles,
     getProfile,
     updateProfile,
-    deleteProfile,
-    requestTxnReview,
-    authorizeTxnReview
+    deleteProfile
 } = require('../controllers/user');
 const {
     authenticate,
@@ -32,8 +30,5 @@ router.route('/profile/:id')
     .get(getProfile)
     .patch(updateProfile)
     .delete(isSysAdmin, deleteProfile);
-
-router.post('/review/request', isSysMgr, requestTxnReview);
-router.post('/review/authorize', isExternal, authorizeTxnReview);
 
 module.exports = router;
