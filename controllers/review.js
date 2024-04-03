@@ -177,6 +177,10 @@ const updateReview = async (req, res, next) => {
             return;
         }
 
+        delete req.body.reviewObject;
+        delete req.body.type;
+        delete req.body.status;
+
         const validatedReviewData = await Review.validate(req.body);
         
         const reviewUpdate = await Review.updateOne({ _id: req.params.id }, validatedReviewData);

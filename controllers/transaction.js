@@ -177,6 +177,18 @@ const getTransaction = async (req, res, next) => {
 
 const updateTransaction = async (req, res, next) => {
     try {
+        const txnInDb = await Transaction.findById(req.params.id);
+
+        if(!txnInDb) {
+            res.status(404).json({ error: 'Transaction not found' });
+            return;
+        }
+
+        delete req.body.from;
+        delete req.body.to;
+        delete req.body.amount;
+        delete req.body.type;
+        
         const validatedTxnData = await Transaction.validate(req.body);
         
         const txnUpdate = await Transaction.updateOne({ _id: req.params.id }, validatedTxnData);

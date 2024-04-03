@@ -86,6 +86,20 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
+        const userInDb = await User.findById(req.params.id);
+
+        if(!userInDb) {
+            res.status(404).json({ message: 'User profile not found' });
+            return;
+        }
+
+        delete req.body.email;
+        delete req.body.password;
+        delete req.body.otp;
+        delete req.body.role;
+        delete req.body.sessions;
+        delete req.body.last_login;
+
         const validatedUserData = await User.validate(req.body);
         
         const userUpdate = await User.updateOne({ _id: req.params.id }, validatedUserData);
