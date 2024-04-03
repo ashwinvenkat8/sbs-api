@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "/api/v1",
+			"name": "LOCAL /api/v1",
 			"item": [
 				{
 					"name": "/auth",
@@ -440,337 +440,7 @@
 					"description": "This folder contains the Auth APIs."
 				},
 				{
-					"name": "/user",
-					"item": [
-						{
-							"name": "/account/all",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/account/all",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"account",
-										"all"
-									]
-								},
-								"description": "This request allows a System Manager/Admin to retrieve all accounts."
-							},
-							"response": []
-						},
-						{
-							"name": "/account/:id",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtExternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/account/65edf673e6f0b56a0cd48768",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"account",
-										"65edf673e6f0b56a0cd48768"
-									]
-								},
-								"description": "This request retrieves a single account using the Account ID."
-							},
-							"response": []
-						},
-						{
-							"name": "/account/:id",
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/account/1",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"account",
-										"1"
-									]
-								},
-								"description": "This request allows the currently authenticated user to raise an account closure request."
-							},
-							"response": []
-						},
-						{
-							"name": "/profile/all",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/profile/all",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"profile",
-										"all"
-									]
-								},
-								"description": "This request allows a System Admin to retrieve all user profiles."
-							},
-							"response": []
-						},
-						{
-							"name": "/profile/:id",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtExternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/profile/65edf673e6f0b56a0cd48766",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"profile",
-										"65edf673e6f0b56a0cd48766"
-									]
-								},
-								"description": "This request retrieves a single profile using the User ID."
-							},
-							"response": []
-						},
-						{
-							"name": "/profile/:id",
-							"request": {
-								"method": "PATCH",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtExternal}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"attributes\": {\r\n        \"first_name\": \"first2\",\r\n        \"middle_name\": \"middle1\",\r\n        \"last_name\": \"last2\",\r\n        \"date_of_birth\": \"1970-01-01\",\r\n        \"gender\": \"Female\",\r\n        \"ssn\": \"123456789\",\r\n        \"address\": \"address1\",\r\n        \"phone_number\": \"+19876543210\"\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/profile/65edf673e6f0b56a0cd48766",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"profile",
-										"65edf673e6f0b56a0cd48766"
-									]
-								},
-								"description": "This request allows the currently authenticated user to update their profile details."
-							},
-							"response": []
-						},
-						{
-							"name": "/profile/:id",
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/profile/1",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"profile",
-										"1"
-									]
-								},
-								"description": "This request allows the currently authenticated user to raise an profile deletion request."
-							},
-							"response": []
-						},
-						{
-							"name": "/review/request",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"from\": \"\",\r\n    \"to\": \"\",\r\n    \"reason\": \"\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/review/request",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"review",
-										"request"
-									]
-								},
-								"description": "#### !!! WIP !!!\n\nThis request allows a System Manager/Admin to raise an account review request."
-							},
-							"response": []
-						},
-						{
-							"name": "/review/authorize",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtExternal}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"requestId\": \"\",\r\n    \"status\": \"\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/user/review/authorize",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"user",
-										"review",
-										"authorize"
-									]
-								},
-								"description": "#### !!! WIP !!!\n\nThis request allows an External user to authorize an account review request."
-							},
-							"response": []
-						}
-					],
-					"description": "This folder contains the User APIs."
-				},
-				{
-					"name": "/transaction",
+					"name": "/review",
 					"item": [
 						{
 							"name": "/all",
@@ -784,7 +454,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/transaction/all",
+									"raw": "http://127.0.0.1:5000/api/v1/review/all",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -796,36 +466,26 @@
 									"path": [
 										"api",
 										"v1",
-										"transaction",
+										"review",
 										"all"
 									]
-								},
-								"description": "This request retrieves all transactions of the currently authenticated user."
+								}
 							},
 							"response": []
 						},
 						{
-							"name": "/new",
+							"name": "/pending/account",
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"from\": {{sender}},\r\n    \"to\": {{beneficiary}},\r\n    \"amount\": 300\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/transaction/new",
+									"raw": "http://127.0.0.1:5000/api/v1/review/pending/account",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -837,11 +497,171 @@
 									"path": [
 										"api",
 										"v1",
-										"transaction",
-										"new"
+										"review",
+										"pending",
+										"account"
 									]
-								},
-								"description": "#### !!! WIP !!!\n\nThis request creates a new transaction."
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/pending/profile",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/review/pending/profile",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"review",
+										"pending",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/pending/transaction",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/review/pending/transaction",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"review",
+										"pending",
+										"transaction"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/approved/account",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/review/approved/account",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"review",
+										"approved",
+										"account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/approved/profile",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/review/approved/profile",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"review",
+										"approved",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/approved/transaction",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/review/approved/transaction",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"review",
+										"approved",
+										"transaction"
+									]
+								}
 							},
 							"response": []
 						},
@@ -852,12 +672,12 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtInternal}}",
 										"type": "text"
 									}
 								],
 								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/transaction/65edfa95e5c83d73b54cba8d",
+									"raw": "http://127.0.0.1:5000/api/v1/review/:id",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -869,11 +689,16 @@
 									"path": [
 										"api",
 										"v1",
-										"transaction",
-										"65edfa95e5c83d73b54cba8d"
+										"review",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
 									]
-								},
-								"description": "This request retrieves a single transaction using the transaction ID.\n\n#### !!! Documentation WIP !!!"
+								}
 							},
 							"response": []
 						},
@@ -890,7 +715,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"status\": \"\"\r\n}",
+									"raw": "{\n    \"reviewer\": \"\",\n    \"reviewObject\": \"\",\n    \"type\": \"\",\n    \"status\": \"\",\n    \"approvedBy\": {\n        \"user\": \"\",\n        \"timestamp\": \"\"\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -898,7 +723,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/transaction/1",
+									"raw": "http://127.0.0.1:5000/api/v1/review/:id",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -910,16 +735,58 @@
 									"path": [
 										"api",
 										"v1",
-										"transaction",
-										"1"
+										"review",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
 									]
-								},
-								"description": "This request allows a System Manager to update a transaction.\n\n#### !!! Documentation WIP !!!"
+								}
 							},
 							"response": []
 						},
 						{
-							"name": "/hvTxn/review",
+							"name": "/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/review/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"review",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/request",
 							"request": {
 								"method": "POST",
 								"header": [
@@ -931,7 +798,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"from\": \"\",\r\n    \"to\": \"\",\r\n    \"reason\": \"\"\r\n}",
+									"raw": "{\n    \"reviewer\": \"\",\n    \"reviewObject\": \"\",\n    \"type\": \"\",\n    \"status\": \"\",\n    \"approvedBy\": {\n        \"user\": \"\",\n        \"timestamp\": \"\"\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -939,7 +806,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/transaction/hvTxn/review",
+									"raw": "http://127.0.0.1:5000/api/v1/review/request",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -951,19 +818,17 @@
 									"path": [
 										"api",
 										"v1",
-										"transaction",
-										"hvTxn",
-										"review"
+										"review",
+										"request"
 									]
-								},
-								"description": "#### !!! WIP !!!\n\nThis request raises a request for the System Manager to review a high-value transaction."
+								}
 							},
 							"response": []
 						},
 						{
-							"name": "/hvTxn/authorize",
+							"name": "/authorize/:id",
 							"request": {
-								"method": "POST",
+								"method": "PATCH",
 								"header": [
 									{
 										"key": "Authorization",
@@ -973,7 +838,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"requestId\": \"\",\r\n    \"status\": \"\"\r\n}",
+									"raw": "{\n    \"reviewer\": \"\",\n    \"reviewObject\": \"\",\n    \"type\": \"\",\n    \"status\": \"\",\n    \"approvedBy\": {\n        \"user\": \"\",\n        \"timestamp\": \"\"\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -981,7 +846,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/transaction/hvTxn/authorize",
+									"raw": "http://127.0.0.1:5000/api/v1/review/authorize/:id",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -993,17 +858,21 @@
 									"path": [
 										"api",
 										"v1",
-										"transaction",
-										"hvTxn",
-										"authorize"
+										"review",
+										"authorize",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
 									]
-								},
-								"description": "#### !!! WIP !!!\n\nThis request allows a System Manager to authorize a high-value transaction."
+								}
 							},
 							"response": []
 						}
-					],
-					"description": "This folder contains the Transaction APIs."
+					]
 				},
 				{
 					"name": "/status",
@@ -1114,6 +983,580 @@
 						}
 					],
 					"description": "This folder contains the Status APIs."
+				},
+				{
+					"name": "/transaction",
+					"item": [
+						{
+							"name": "/all",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/transaction/all",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"transaction",
+										"all"
+									]
+								},
+								"description": "This request retrieves all transactions of the currently authenticated user."
+							},
+							"response": []
+						},
+						{
+							"name": "/:userId/all",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Review-ID",
+										"value": "{{reviewId}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/transaction/:userId/all",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"transaction",
+										":userId",
+										"all"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request retrieves all transactions of the currently authenticated user."
+							},
+							"response": []
+						},
+						{
+							"name": "/new",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"from\": {{sender}},\r\n    \"to\": {{beneficiary}},\r\n    \"amount\": 300\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/transaction/new",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"transaction",
+										"new"
+									]
+								},
+								"description": "#### !!! WIP !!!\n\nThis request creates a new transaction."
+							},
+							"response": []
+						},
+						{
+							"name": "/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/transaction/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"transaction",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request retrieves a single transaction using the transaction ID.\n\n#### !!! Documentation WIP !!!"
+							},
+							"response": []
+						},
+						{
+							"name": "/:id",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/transaction/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"transaction",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request allows a System Manager to update a transaction.\n\n#### !!! Documentation WIP !!!"
+							},
+							"response": []
+						}
+					],
+					"description": "This folder contains the Transaction APIs."
+				},
+				{
+					"name": "/user",
+					"item": [
+						{
+							"name": "/account/all",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/account/all",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"account",
+										"all"
+									]
+								},
+								"description": "This request allows a System Manager/Admin to retrieve all accounts."
+							},
+							"response": []
+						},
+						{
+							"name": "/account/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/account/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"account",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request retrieves a single account using the Account ID."
+							},
+							"response": []
+						},
+						{
+							"name": "/account/review/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Review-ID",
+										"value": "{{reviewId}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/account/review/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"account",
+										"review",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request retrieves a single profile using the User ID."
+							},
+							"response": []
+						},
+						{
+							"name": "/account/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/account/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"account",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request allows the currently authenticated user to raise an account closure request."
+							},
+							"response": []
+						},
+						{
+							"name": "/profile/all",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/profile/all",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"profile",
+										"all"
+									]
+								},
+								"description": "This request allows a System Admin to retrieve all user profiles."
+							},
+							"response": []
+						},
+						{
+							"name": "/profile/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/profile/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"profile",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request retrieves a single profile using the User ID."
+							},
+							"response": []
+						},
+						{
+							"name": "/profile/review/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Review-ID",
+										"value": "{{reviewId}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/profile/review/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"profile",
+										"review",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request retrieves a single profile using the User ID."
+							},
+							"response": []
+						},
+						{
+							"name": "/profile/:id",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtExternal}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"attributes\": {\r\n        \"first_name\": \"first2\",\r\n        \"middle_name\": \"middle1\",\r\n        \"last_name\": \"last2\",\r\n        \"date_of_birth\": \"1970-01-01\",\r\n        \"gender\": \"Female\",\r\n        \"ssn\": \"123456789\",\r\n        \"address\": \"address1\",\r\n        \"phone_number\": \"+19876543210\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/profile/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"profile",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request allows the currently authenticated user to update their profile details."
+							},
+							"response": []
+						},
+						{
+							"name": "/profile/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtInternal}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/profile/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"profile",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								},
+								"description": "This request allows the currently authenticated user to raise an profile deletion request."
+							},
+							"response": []
+						}
+					],
+					"description": "This folder contains the User APIs."
 				}
 			],
 			"description": "This folder contains Version 1 of the SBS API."
