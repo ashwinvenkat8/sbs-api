@@ -20,128 +20,30 @@ const getAllReviews = async (req, res, next) => {
     }
 };
 
-const getPendingAccountReviews = async (req, res, next) => {
+const getReviewsByTypeAndStatus = async (req, res, next) => {
     try {
-        const pendingAccountReviews = await Review.find({ status: 'PENDING APPROVAL', type: 'ACCOUNT' });
-        
-        if(!pendingAccountReviews) {
-            res.status(404).json({ error: 'No pending account reviews found' });
+        const validStatus = ['PENDING APPROVAL', 'APPROVED', 'REJECTED'];
+        const validType = ['HIGH VALUE TXN', 'TRANSACTION', 'PROFILE', 'ACCOUNT'];
+        const reviewStatus = req.query.status;
+        const reviewType = req.query.type;
+
+        if(!validStatus.includes(reviewStatus)) {
+            res.status(400).json({ error: 'Invalid review status' });
+            return;
+        }
+        if(!validType.includes(reviewType)) {
+            res.status(400).json({ error: 'Invalid review type' });
             return;
         }
 
-        res.status(200).json(pendingAccountReviews);
-
-    } catch(err) {
-        next(err);
-    }
-};
-
-const getPendingProfileReviews = async (req, res, next) => {
-    try {
-        const pendingProfileReviews = await Review.find({ status: 'PENDING APPROVAL', type: 'PROFILE' });
+        const reviews = await Review.find({ status: reviewStatus, type: reviewType });
         
-        if(!pendingProfileReviews) {
-            res.status(404).json({ error: 'No pending profile reviews found' });
+        if(!reviews) {
+            res.status(404).json({ error: `No ${reviewStatus.toLowerCase()} ${reviewType.toLowerCase()} reviews found` });
             return;
         }
 
-        res.status(200).json(pendingProfileReviews);
-
-    } catch(err) {
-        next(err);
-    }
-};
-
-const getPendingTransactionReviews = async (req, res, next) => {
-    try {
-        const pendingTransactionReviews = await Review.find({ status: 'PENDING APPROVAL', type: 'TRANSACTION' });
-        
-        if(!pendingTransactionReviews) {
-            res.status(404).json({ error: 'No pending transaction reviews found' });
-            return;
-        }
-
-        res.status(200).json(pendingTransactionReviews);
-
-    } catch(err) {
-        next(err);
-    }
-};
-
-const getPendingHVTxnReviews = async (req, res, next) => {
-    try {
-        const pendingHVTxnReviews = await Review.find({ status: 'PENDING APPROVAL', type: 'HIGH VALUE TXN' });
-        
-        if(!pendingHVTxnReviews) {
-            res.status(404).json({ error: 'No pending transaction reviews found' });
-            return;
-        }
-
-        res.status(200).json(pendingHVTxnReviews);
-
-    } catch(err) {
-        next(err);
-    }
-};
-
-const getApprovedAccountReviews = async (req, res, next) => {
-    try {
-        const approvedAccountReviews = await Review.find({ status: 'APPROVED', type: 'ACCOUNT' });
-        
-        if(!approvedAccountReviews) {
-            res.status(404).json({ error: 'No approved account reviews found' });
-            return;
-        }
-
-        res.status(200).json(approvedAccountReviews);
-
-    } catch(err) {
-        next(err);
-    }
-};
-
-const getApprovedProfileReviews = async (req, res, next) => {
-    try {
-        const approvedProfileReviews = await Review.find({ status: 'APPROVED', type: 'PROFILE' });
-        
-        if(!approvedProfileReviews) {
-            res.status(404).json({ error: 'No approved profile reviews found' });
-            return;
-        }
-
-        res.status(200).json(approvedProfileReviews);
-
-    } catch(err) {
-        next(err);
-    }
-};
-
-const getApprovedTransactionReviews = async (req, res, next) => {
-    try {
-        const approvedTransactionReviews = await Review.find({ status: 'APPROVED', type: 'TRANSACTION' });
-        
-        if(!approvedTransactionReviews) {
-            res.status(404).json({ error: 'No approved transaction reviews found' });
-            return;
-        }
-
-        res.status(200).json(approvedTransactionReviews);
-
-    } catch(err) {
-        next(err);
-    }
-};
-
-const getApprovedHVTxnReviews = async (req, res, next) => {
-    try {
-        const approvedHVTxnReviews = await Review.find({ status: 'APPROVED', type: 'HIGH VALUE TXN' });
-        
-        if(!approvedHVTxnReviews) {
-            res.status(404).json({ error: 'No approved transaction reviews found' });
-            return;
-        }
-
-        res.status(200).json(approvedHVTxnReviews);
+        res.status(200).json(reviews);
 
     } catch(err) {
         next(err);
@@ -351,14 +253,7 @@ const rejectReview = async (req, res, next) => {
 
 module.exports = {
     getAllReviews,
-    getPendingAccountReviews,
-    getPendingProfileReviews,
-    getPendingTransactionReviews,
-    getPendingHVTxnReviews,
-    getApprovedAccountReviews,
-    getApprovedProfileReviews,
-    getApprovedTransactionReviews,
-    getApprovedHVTxnReviews,
+    getReviewsByTypeAndStatus,
     getReview,
     updateReview,
     deleteReview,
