@@ -166,6 +166,17 @@ const getReview = async (req, res, next) => {
 
 const updateReview = async (req, res, next) => {
     try {
+        const reviewInDb = await Review.findById(req.params.id);
+
+        if(!reviewInDb) {
+            res.status(404).json({ error: 'Review not found' });
+            return;
+        }
+        if(reviewInDb.status !== 'PENDING APPROVAL') {
+            res.status(403).json({ error: 'Review cannot be updated' });
+            return;
+        }
+
         const validatedReviewData = await Review.validate(req.body);
         
         const reviewUpdate = await Review.updateOne({ _id: req.params.id }, validatedReviewData);
