@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../mongo/model/User');
 
 const authenticate = async (req, res, next) => {
-    const token = req.headers.authorization;
+    const token = req.headers?.authorization;
     if (!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -54,8 +54,23 @@ const authenticate = async (req, res, next) => {
     }
 };
 
+const isEmployee = async (req, res, next) => {
+    const token = req.headers?.authorization;
+    if(!token) {
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
+    }
+
+    if(req.userRole !== 'EMPLOYEE' ) {
+        res.status(403).json({ message: 'Access denied' });
+        return;
+    }
+    
+    next();
+};
+
 const isSysAdmin = async (req, res, next) => {
-    const token = req.headers.authorization;
+    const token = req.headers?.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -70,7 +85,7 @@ const isSysAdmin = async (req, res, next) => {
 };
 
 const isSysMgr = async (req, res, next) => {
-    const token = req.headers.authorization;
+    const token = req.headers?.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -85,7 +100,7 @@ const isSysMgr = async (req, res, next) => {
 };
 
 const isExternal = async (req, res, next) => {
-    const token = req.headers.authorization;
+    const token = req.headers?.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -99,8 +114,40 @@ const isExternal = async (req, res, next) => {
     next();
 };
 
+const isInternal = async (req, res, next) => {
+    const token = req.headers?.authorization;
+    if(!token) {
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
+    }
+
+    const allowedRoles = ['EMPLOYEE', 'SYSTEM_MANAGER', 'SYSTEM_ADMIN'];
+    if(!allowedRoles.includes(req.userRole)) {
+        res.status(403).json({ message: 'Access denied' });
+        return;
+    }
+    
+    next();
+};
+
+const isExternalOrEmployee = async (req, res, next) => {
+    const token = req.headers?.authorization;
+    if(!token) {
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
+    }
+
+    const allowedRoles = ['CUSTOMER', 'MERCHANT', 'EMPLOYEE'];
+    if(!allowedRoles.includes(req.userRole)) {
+        res.status(403).json({ message: 'Access denied' });
+        return;
+    }
+    
+    next();
+};
+
 const isExternalOrSysMgr = async (req, res, next) => {
-    const token = req.headers.authorization;
+    const token = req.headers?.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -116,7 +163,7 @@ const isExternalOrSysMgr = async (req, res, next) => {
 };
 
 const isSysAdminOrSysMgr = async (req, res, next) => {
-    const token = req.headers.authorization;
+    const token = req.headers?.authorization;
     if(!token) {
         res.status(401).json({ message: 'Unauthenticated' });
         return;
@@ -131,11 +178,46 @@ const isSysAdminOrSysMgr = async (req, res, next) => {
     next();
 };
 
+const isReviewApproved = async (req, res, next) => {
+    const reviewId = req.headers?.x-review-id;
+    
+    if(!reviewId) {
+        res.status(400).json({ message: 'Active review required to access this resource' });
+        return;
+    }
+
+    try {
+        const review = await Review.findById(reviewId);
+        if(!review) {
+            res.status(404).json({ message: 'Review not found' });
+            return;
+        }
+
+        if(review.status !== 'APPROVED') {
+            res.status(403).json({ message: 'Review not approved' });
+            return;
+        }
+
+        if (review.type === 'HIGH VALUE TXN') {
+            req.reviewee = review.reviewObject;
+        }
+        
+        next();
+    
+    } catch(err) {
+        next(err);
+    }
+};
+
 module.exports = {
     authenticate,
+    isEmployee,
     isSysAdmin,
     isSysMgr,
     isExternal,
+    isInternal,
+    isExternalOrEmployee,
     isExternalOrSysMgr,
-    isSysAdminOrSysMgr
+    isSysAdminOrSysMgr,
+    isReviewApproved
 };

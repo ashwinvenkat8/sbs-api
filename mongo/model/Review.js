@@ -3,21 +3,20 @@ const mongoose = require('mongoose');
 const reviewStatus = [
     'PENDING APPROVAL',
     'APPROVED',
-    'REJECTED',
-    'COMPLETED',
-    'CANCELLED'
+    'REJECTED'
 ];
 
-const reviewType = ['TRANSACTION', 'PROFILE', 'ACCOUNT'];
+const reviewType = ['HIGH VALUE TXN', 'TRANSACTION', 'PROFILE', 'ACCOUNT'];
 
 const ReviewSchema = new mongoose.Schema({
     reviewer: {
         type: mongoose.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        default: null
     },
-    reviewee: {
+    reviewObject: {
         type: mongoose.Types.ObjectId,
-        ref: 'User'
+        default: null
     },
     type: {
         type: String,

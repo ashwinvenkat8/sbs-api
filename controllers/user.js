@@ -3,10 +3,10 @@ const User = require('../mongo/model/User');
 
 const getAllAccounts = async (req, res, next) => {
     try {
-        const accounts = await Account.find({}, { transactions: 0 })
+        const accounts = await Account.find({}, { transactions: 0, review: 0 })
             .populate({
                 path: 'user',
-                select: '-password -sessions',
+                select: '-otp.secret -password -review -sessions',
                 retainNullValues: true
             }).exec();
 
@@ -24,10 +24,10 @@ const getAllAccounts = async (req, res, next) => {
 
 const getAccount = async (req, res, next) => {
     try {
-        const account = await Account.findById(req.params.id, { transactions: 0 })
+        const account = await Account.findById(req.params.id, { transactions: 0, review: 0 })
             .populate({
                 path: 'user',
-                select: '-password -sessions',
+                select: '-otp.secret -password -review -sessions',
                 retainNullValues: true
             }).exec();
 
@@ -54,7 +54,7 @@ const deleteAccount = async (req, res, next) => {
 
 const getAllProfiles = async (req, res, next) => {
     try {
-        const profiles = await User.find({}, { password: 0, sessions: 0 });
+        const profiles = await User.find({}, { 'otp.secret': 0, password: 0, review: 0, sessions: 0 });
 
         if(!profiles) {
             res.status(404).json({ message: 'Found no registered profiles' });
@@ -70,7 +70,7 @@ const getAllProfiles = async (req, res, next) => {
 
 const getProfile = async (req, res, next) => {
     try {
-        const user = await User.findById(req.params.id, { password: 0, sessions: 0 });
+        const user = await User.findById(req.params.id, { 'otp.secret': 0, password: 0, review: 0, sessions: 0 });
 
         if(!user) {
             res.status(404).json({ message: 'User profile not found' });

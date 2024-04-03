@@ -11,9 +11,10 @@ const {
 } = require('../controllers/user');
 const {
     authenticate,
+    isExternal,
     isSysAdmin,
-    isSysMgr,
-    isExternal
+    isReviewApproved,
+    isSysAdminOrSysMgr
 } = require('../middleware/auth');
 
 const router = express.Router();
@@ -21,14 +22,16 @@ const router = express.Router();
 router.all('*', authenticate);
 
 router.get('/account/all', isSysAdmin, getAllAccounts);
+router.get('/account/review/:id', isSysAdminOrSysMgr, isReviewApproved, getAccount);
 router.route('/account/:id')
-    .get(getAccount)
+    .get(isExternal, getAccount)
     .delete(isSysAdmin, deleteAccount);
 
 router.get('/profile/all', isSysAdmin, getAllProfiles);
+router.get('/profile/review/:id', isSysAdminOrSysMgr, isReviewApproved, getProfile);
 router.route('/profile/:id')
-    .get(getProfile)
-    .patch(updateProfile)
+    .get(isExternal, getProfile)
+    .patch(isExternal, updateProfile)
     .delete(isSysAdmin, deleteProfile);
 
 module.exports = router;

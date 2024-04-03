@@ -1,15 +1,41 @@
 const mongoose = require('mongoose');
 const Account = require('../mongo/model/Account');
+const Review = require('../mongo/model/Review');
 const Transaction = require('../mongo/model/Transaction');
 
-const createTransaction = async (req, res, next) => {
-    let savedTransaction = null;
+const doTransaction = async (sender, beneficiary, amount) => {
+    try {
+        const dbSession = await mongoose.startSession();
+        dbSession.withTransaction(async () => {
+            // DEBIT
+            let updatedSenderBalance = parseFloat(sender.balance) - parseFloat(amount);
+            const debitFromSender = await Account.updateOne({ _id: sender._id }, { balance: updatedSenderBalance }).session(dbSession);
+            if(!debitFromSender.acknowledged || debitFromSender.modifiedCount !== 1) {
+                await dbSession.abortTransaction();
+                return { statusCode: 500, statusMessage: 'Debit failed', txnStatus: 'FAILED' };
+            }
 
+            // CREDIT
+            let updatedBeneficiaryBalance = parseFloat(beneficiary.balance) + parseFloat(amount);
+            const creditToBeneficiary = await Account.updateOne({ _id: beneficiary._id }, { balance: updatedBeneficiaryBalance }).session(dbSession);
+            if(!creditToBeneficiary.acknowledged || creditToBeneficiary.modifiedCount !== 1) {
+                await dbSession.abortTransaction();
+                return { statusCode: 500, statusMessage: 'Credit failed', txnStatus: 'FAILED' };
+            }
+        });
+
+        return { statusCode: 200, statusMessage: 'Transaction completed', txnStatus: 'COMPLETED' };
+    
+    } catch(err) {
+        next(err);
+    }
+};
+
+const createTransaction = async (req, res, next) => {
     try {
         const fieldsToProject = { _id: 1, user: 1, balance: 1 };
         const sender = await Account.findOne({ accountNumber: req.body.from }, fieldsToProject);
         const beneficiary = await Account.findOne({ accountNumber: req.body.to }, fieldsToProject);
-        let isAmountValid = parseFloat(req.body.amount) > 1;
 
         if(!sender || req.userId !== sender.user.toString()) {
             res.status(400).json({ error: 'Invalid sender' });
@@ -19,71 +45,78 @@ const createTransaction = async (req, res, next) => {
             res.status(400).json({ error: 'Invalid beneficiary' });
             return;
         }
-        if(!isAmountValid) {
+        if(req.body.from === req.body.to) {
+            res.status(400).json({ error: 'Sender and beneficiary accounts cannot be the same' });
+            return;
+        }
+        if(parseFloat(req.body.amount) < 1) {
             res.status(400).json({ error: 'Invalid amount' });
             return;
         }
 
-        const dbSession = await mongoose.startSession();
-        dbSession.withTransaction(async () => {
-            const newTransaction = new Transaction({
-                from: sender._id,
-                to: beneficiary._id,
-                amount: req.body.amount,
-                status: 'CREATED',
-                createdBy: sender.user
-            });
-    
-            if(parseFloat(req.body.amount) >= 10000) {
-                newTransaction.status = 'PENDING APPROVAL';
-            }
-    
-            savedTransaction = await newTransaction.save();
-            
-            let updatedSenderBalance = parseFloat(sender.balance) - parseFloat(req.body.amount);
-            if(updatedSenderBalance < 0) {
-                await savedTransaction.updateOne({ status: 'CANCELLED' }).session(dbSession);
-                res.status(400).json({ error: 'Insufficient balance in sender\'s account' });
-                return;
-            }
-    
-            /**
-             * TODO: Implement high value transaction authorization mechanism
-            */
-    
-            const debitFromSender = await Account.updateOne({ _id: sender._id }, { balance: updatedSenderBalance }).session(dbSession);
-            if(!debitFromSender.acknowledged || debitFromSender.modifiedCount !== 1) {
-                await savedTransaction.updateOne({ status: 'FAILED' }).session(dbSession);
-                
-                // Restore balance
-                // await Account.updateOne({ _id: sender._id }, { balance: sender.balance });
-                await dbSession.abortTransaction();
-                
-                res.status(500).json({ error: 'Transaction failed' });
-                return;
-            }
-            
-            let updatedBeneficiaryBalance = parseFloat(beneficiary.balance) + parseFloat(req.body.amount);
-            
-            const creditToBeneficiary = await Account.updateOne({ _id: beneficiary._id }, { balance: updatedBeneficiaryBalance }).session(dbSession);
-            if(!creditToBeneficiary.acknowledged || creditToBeneficiary.modifiedCount !== 1) {
-                await savedTransaction.updateOne({ status: 'FAILED' }).session(dbSession);
-                
-                // Restore balances
-                // await Account.updateOne({ _id: sender._id }, { balance: sender.balance });
-                // await Account.updateOne({ _id: beneficiary._id }, { balance: beneficiary.balance });
-                await dbSession.abortTransaction();
-                
-                res.status(500).json({ error: 'Transaction failed' });
-                return;
-            }
+        let updatedSenderBalance = parseFloat(sender.balance) - parseFloat(req.body.amount);
+        if(updatedSenderBalance < 0) {
+            res.status(400).json({ error: 'Insufficient balance in sender\'s account' });
+            return;
+        }
 
-            await savedTransaction.updateOne({ status: 'COMPLETED' }).session(dbSession);
-            res.status(200).json({ message: 'Transaction completed' });
+        const senderTxn = new Transaction({
+            from: sender._id,
+            to: beneficiary._id,
+            amount: req.body.amount,
+            message: req.body.message,
+            type: 'DEBIT',
+            status: 'CREATED'
         });
-        
+
+        const beneficiaryTxn = new Transaction({
+            from: sender._id,
+            to: beneficiary._id,
+            amount: req.body.amount,
+            message: req.body.message,
+            type: 'CREDIT',
+            status: 'CREATED'
+        });
+
+        // High-value transaction - creates a review and sets transaction status to 'PENDING APPROVAL'
+        if(parseFloat(req.body.amount) > 10000) {
+            senderTxn.status = 'PENDING APPROVAL';
+            beneficiaryTxn.status = 'PENDING APPROVAL';
+            
+            await Account.updateOne({ _id: sender._id }, { $push: { transactions: senderTxn._id }});
+            await Account.updateOne({ _id: beneficiary._id }, { $push: { transactions: beneficiaryTxn._id }});
+            
+            const newReview = new Review({
+                reviewObject: senderTxn._id,
+                type: 'HIGH VALUE TXN',
+                status: 'PENDING APPROVAL'
+            });
+            const savedReview = await newReview.save();
+            
+            senderTxn.review = savedReview._id;
+            beneficiaryTxn.review = savedReview._id;
+
+            await senderTxn.save();
+            await beneficiaryTxn.save();
+            
+            res.status(200).json({ message: 'High value transaction created and pending approval' });
+
+        // Regular transaction - debits sender and credits beneficiary immediately
+        } else {
+            let { statusCode, statusMessage, txnStatus } = await doTransaction(sender, beneficiary, req.body.amount);
+
+            senderTxn.status = txnStatus;
+            beneficiaryTxn.status = txnStatus;
+
+            const savedSenderTxn = await senderTxn.save();
+            const savedBeneficiaryTxn = await beneficiaryTxn.save();
+
+            await Account.updateOne({ _id: sender._id }, { $push: { transactions: savedSenderTxn._id }});
+            await Account.updateOne({ _id: beneficiary._id }, { $push: { transactions: savedBeneficiaryTxn._id }});
+
+            res.status(statusCode).json({ message: statusMessage });
+        }
     } catch(err) {
-        await savedTransaction.updateOne({ status: 'FAILED' });
         next(err);
     }
 };
@@ -92,7 +125,7 @@ const getAllTransactions = async (req, res, next) => {
     try {
         let transactions = null;
 
-        if (req.userRole === 'SYSTEM_MANAGER') {
+        if (req.userRole === 'SYSTEM_MANAGER' || req.userRole === 'SYSTEM_ADMIN') {
             transactions = await Transaction.find({});
         } else {
             transactions = await Account.findOne({ user: req.userId }, { transactions: 1 });
@@ -109,6 +142,22 @@ const getAllTransactions = async (req, res, next) => {
         next(err);
     }
 };
+
+const getUserTransactions = async (req, res, next) => {
+    try {
+        let transactions = await Account.findOne({ user: req.reviewee }, { transactions: 1 });
+
+        if(!transactions) {
+            res.status(404).status({ error: 'No transactions found' });
+            return;
+        }
+
+        res.status(200).json(transactions);
+
+    } catch(err) {
+        next(err);
+    }
+}
 
 const getTransaction = async (req, res, next) => {
     try {
@@ -143,15 +192,11 @@ const updateTransaction = async (req, res, next) => {
     }
 };
 
-const reviewHVTransaction = async (req, res, next) => {};
-
-const authorizeHVTransaction = async (req, res, next) => {};
-
 module.exports = {
+    doTransaction,
     createTransaction,
     getAllTransactions,
+    getUserTransactions,
     getTransaction,
-    updateTransaction,
-    reviewHVTransaction,
-    authorizeHVTransaction
+    updateTransaction
 };

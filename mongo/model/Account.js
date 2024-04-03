@@ -13,13 +13,19 @@ const AccountSchema = new mongoose.Schema({
     balance: {
         type: mongoose.Types.Decimal128,
         default: new mongoose.Types.Decimal128('0.0'),
+        min: 0,
         get: v => parseFloat(v)
     },
     transactions: [{
         type: mongoose.Types.ObjectId,
         ref: 'Transaction',
         default: []
-    }]
+    }],
+    review: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Review',
+        default: null
+    }
 }, { timestamps: true });
 
 const Account = mongoose.model('Account', AccountSchema);

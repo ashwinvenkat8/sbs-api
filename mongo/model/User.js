@@ -64,6 +64,11 @@ const UserSchema = new mongoose.Schema({
     last_login: {
         type: Date,
         default: null
+    },
+    review: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Review',
+        default: null
     }
 }, { timestamps: true });
 

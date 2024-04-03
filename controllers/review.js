@@ -1,4 +1,8 @@
+const Account = require('../mongo/model/Account');
 const Review = require('../mongo/model/Review');
+const Transaction = require('../mongo/model/Transaction');
+
+const { doTransaction } = require('./transaction');
 
 const getAllReviews = async (req, res, next) => {
     try {
@@ -16,16 +20,128 @@ const getAllReviews = async (req, res, next) => {
     }
 };
 
-const getPendingReviews = async (req, res, next) => {
+const getPendingAccountReviews = async (req, res, next) => {
     try {
-        const pendingReviews = await Review.find({ status: 'PENDING APPROVAL' });
+        const pendingAccountReviews = await Review.find({ status: 'PENDING APPROVAL', type: 'ACCOUNT' });
         
-        if(!pendingreviews) {
-            res.status(404).json({ error: 'No pending reviews found' });
+        if(!pendingAccountReviews) {
+            res.status(404).json({ error: 'No pending account reviews found' });
             return;
         }
 
-        res.status(200).json(pendingReviews);
+        res.status(200).json(pendingAccountReviews);
+
+    } catch(err) {
+        next(err);
+    }
+};
+
+const getPendingProfileReviews = async (req, res, next) => {
+    try {
+        const pendingProfileReviews = await Review.find({ status: 'PENDING APPROVAL', type: 'PROFILE' });
+        
+        if(!pendingProfileReviews) {
+            res.status(404).json({ error: 'No pending profile reviews found' });
+            return;
+        }
+
+        res.status(200).json(pendingProfileReviews);
+
+    } catch(err) {
+        next(err);
+    }
+};
+
+const getPendingTransactionReviews = async (req, res, next) => {
+    try {
+        const pendingTransactionReviews = await Review.find({ status: 'PENDING APPROVAL', type: 'TRANSACTION' });
+        
+        if(!pendingTransactionReviews) {
+            res.status(404).json({ error: 'No pending transaction reviews found' });
+            return;
+        }
+
+        res.status(200).json(pendingTransactionReviews);
+
+    } catch(err) {
+        next(err);
+    }
+};
+
+const getPendingHVTxnReviews = async (req, res, next) => {
+    try {
+        const pendingHVTxnReviews = await Review.find({ status: 'PENDING APPROVAL', type: 'HIGH VALUE TXN' });
+        
+        if(!pendingHVTxnReviews) {
+            res.status(404).json({ error: 'No pending transaction reviews found' });
+            return;
+        }
+
+        res.status(200).json(pendingHVTxnReviews);
+
+    } catch(err) {
+        next(err);
+    }
+};
+
+const getApprovedAccountReviews = async (req, res, next) => {
+    try {
+        const approvedAccountReviews = await Review.find({ status: 'APPROVED', type: 'ACCOUNT' });
+        
+        if(!approvedAccountReviews) {
+            res.status(404).json({ error: 'No approved account reviews found' });
+            return;
+        }
+
+        res.status(200).json(approvedAccountReviews);
+
+    } catch(err) {
+        next(err);
+    }
+};
+
+const getApprovedProfileReviews = async (req, res, next) => {
+    try {
+        const approvedProfileReviews = await Review.find({ status: 'APPROVED', type: 'PROFILE' });
+        
+        if(!approvedProfileReviews) {
+            res.status(404).json({ error: 'No approved profile reviews found' });
+            return;
+        }
+
+        res.status(200).json(approvedProfileReviews);
+
+    } catch(err) {
+        next(err);
+    }
+};
+
+const getApprovedTransactionReviews = async (req, res, next) => {
+    try {
+        const approvedTransactionReviews = await Review.find({ status: 'APPROVED', type: 'TRANSACTION' });
+        
+        if(!approvedTransactionReviews) {
+            res.status(404).json({ error: 'No approved transaction reviews found' });
+            return;
+        }
+
+        res.status(200).json(approvedTransactionReviews);
+
+    } catch(err) {
+        next(err);
+    }
+};
+
+const getApprovedHVTxnReviews = async (req, res, next) => {
+    try {
+        const approvedHVTxnReviews = await Review.find({ status: 'APPROVED', type: 'HIGH VALUE TXN' });
+        
+        if(!approvedHVTxnReviews) {
+            res.status(404).json({ error: 'No approved transaction reviews found' });
+            return;
+        }
+
+        res.status(200).json(approvedHVTxnReviews);
 
     } catch(err) {
         next(err);
@@ -38,10 +154,6 @@ const getReview = async (req, res, next) => {
 
         if(!review) {
             res.status(404).json({ error: 'Review not found' });
-            return;
-        }
-        if(review.reviewer !== req.userId && review.reviewee !== req.userId) {
-            res.status(403).json({ error: 'Forbidden' });
             return;
         }
 
@@ -85,7 +197,7 @@ const requestReview = async (req, res, next) => {
         
         const newReview = new Review({
             reviewer: validatedReviewData.reviewer,
-            reviewee: validatedReviewData.reviewee,
+            reviewObject: validatedReviewData.reviewObject,
             type: validatedReviewData.type,
             status: 'PENDING APPROVAL'
         });
@@ -110,12 +222,52 @@ const authorizeReview = async (req, res, next) => {
             return;
         }
 
+        if(review.type === 'HIGH VALUE TXN') {
+            if(req.userRole !== 'SYSTEM_MANAGER') {
+                res.status(403).json({ error: 'Insufficient privilege to authorize high-value transactions' });
+                return;
+            } else {
+                review.reviewer = req.userId;
+                review.status = 'APPROVED';
+                review.approvedBy.user = req.userId;
+                review.approvedBy.timestamp = new Date().toISOString();
+                await review.save();
+
+                const senderTxn = await Transaction.findById(review.reviewObject);
+                const beneficiaryTxn = await Transaction.findOne({ to: senderTxn?.to, review: review._id, type: 'CREDIT' });
+
+                if(!senderTxn) {
+                    res.status(404).json({ error: 'Debit transaction not found' });
+                    return;
+                }
+                if(!beneficiaryTxn) {
+                    res.status(404).json({ error: 'Credit transaction not found' });
+                    return;
+                }
+
+                const sender = await Account.findById(senderTxn?.from);
+                const beneficiary = await Account.findById(senderTxn?.to);
+                let { statusCode, statusMessage, txnStatus } = await doTransaction(sender, beneficiary, senderTxn.amount);
+
+                senderTxn.status = txnStatus;
+                beneficiaryTxn.status = txnStatus;
+
+                await senderTxn.save();
+                await beneficiaryTxn.save();
+
+                res.status(statusCode).json({ message: statusMessage });
+                return;
+            }
+        }
+
+        review.reviewer = req.userId;
         review.status = 'APPROVED';
         review.approvedBy.user = req.userId;
         review.approvedBy.timestamp = new Date().toISOString();
         await review.save();
 
-        res.status(200).json({ message: 'Review approved' });
+        res.status(200).json({ message: 'Review authorized' });
+    
     } catch(err) {
         next(err);
     }
@@ -123,7 +275,14 @@ const authorizeReview = async (req, res, next) => {
 
 module.exports = {
     getAllReviews,
-    getPendingReviews,
+    getPendingAccountReviews,
+    getPendingProfileReviews,
+    getPendingTransactionReviews,
+    getPendingHVTxnReviews,
+    getApprovedAccountReviews,
+    getApprovedProfileReviews,
+    getApprovedTransactionReviews,
+    getApprovedHVTxnReviews,
     getReview,
     updateReview,
     deleteReview,

@@ -3,31 +3,30 @@ const express = require('express');
 const {
     createTransaction,
     getAllTransactions,
+    getUserTransactions,
     getTransaction,
     updateTransaction,
-    reviewHVTransaction,
-    authorizeHVTransaction
 } = require('../controllers/transaction');
 const {
     authenticate,
-    isSysMgr,
     isExternal,
-    isExternalOrSysMgr
+    isSysMgr,
+    isExternalOrSysMgr,
+    isSysAdminOrSysMgr,
+    isReviewApproved
 } = require('../middleware/auth');
 
 const router = express.Router();
 
 router.all('*', authenticate);
 
-router.get('/all', isExternalOrSysMgr, getAllTransactions);
+router.get('/all', isSysAdminOrSysMgr, getAllTransactions);
+router.get('/:userId/all', isSysMgr, isReviewApproved, getUserTransactions);
 
 router.post('/new', isExternal, createTransaction);
 
 router.route('/:id')
     .get(isExternalOrSysMgr, getTransaction)
     .patch(isExternalOrSysMgr, updateTransaction);
-
-router.post('/hvTxn/review', isExternal, reviewHVTransaction)
-router.post('/hvTxn/authorize', isSysMgr, authorizeHVTransaction);
 
 module.exports = router;
