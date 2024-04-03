@@ -19,15 +19,33 @@ const register = async (req, res, next) => {
             return;
         }
 
-        const attributes = {
-            first_name: req.body.first_name,
-            middle_name: req.body.middle_name,
-            last_name: req.body.last_name,
-            date_of_birth: req.body.date_of_birth,
-            gender: req.body.gender,
-            ssn: req.body.ssn,
-            address: req.body.address,
-            phone_number: req.body.phone_number
+        let attributes = null;
+        
+        if(req.body.role === 'CUSTOMER') {
+            attributes = {
+                first_name: req.body?.first_name,
+                middle_name: req.body?.middle_name,
+                last_name: req.body?.last_name,
+                date_of_birth: req.body?.date_of_birth,
+                gender: req.body?.gender,
+                ssn: req.body?.ssn,
+                address: req.body?.address,
+                phone_number: req.body?.phone_number
+            }
+        } else if(req.body.role === 'MERCHANT') {
+            attributes = {
+                business_name: req.body?.business_name,
+                business_phone: req.body?.business_phone,
+                business_doi: req.body?.business_doi,
+                ein: req.body?.ein,
+                address: req.body?.address,
+                owner_name: req.body?.owner_name,
+                owner_dob: req.body?.owner_dob,
+                owner_gender: req.body?.owner_gender,
+                owner_ssn: req.body?.owner_ssn,
+                owner_phone: req.body?.owner_phone,
+                payment_id: crypto.randomBytes(16).toString('base64url')
+            }
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
