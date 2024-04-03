@@ -14,310 +14,640 @@
 					"name": "/auth",
 					"item": [
 						{
-							"name": "/register Internal",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"email\": \"admin1@bank.com\",\r\n    \"password\": \"admin1!\",\r\n    \"first_name\": \"first1\",\r\n    \"middle_name\": \"middle1\",\r\n    \"last_name\": \"last1\",\r\n    \"date_of_birth\": \"1970-01-01\",\r\n    \"gender\": \"Female\",\r\n    \"ssn\": \"123456789\",\r\n    \"address\": \"address\",\r\n    \"phone_number\": \"+19876543201\",\r\n    \"role\": \"SYSTEM_ADMIN\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
+							"name": "sysadmin",
+							"item": [
+								{
+									"name": "/register sysadmin",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"sysadmin\",\r\n    \"email\": \"sysadmin@easybank.com\",\r\n    \"password\": \"verySecureAdminPass123!\",\r\n    \"first_name\": \"Alice\",\r\n    \"middle_name\": \"Helen\",\r\n    \"last_name\": \"Green\",\r\n    \"date_of_birth\": \"1984-05-21\",\r\n    \"gender\": \"Female\",\r\n    \"ssn\": \"293486301\",\r\n    \"address\": \"492 N. College Ave, Bloomington, IN 47406\",\r\n    \"phone_number\": \"+18124379634\",\r\n    \"role\": \"SYSTEM_ADMIN\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/register",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"register"
+											]
+										},
+										"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n    \n- email (text): The email address of the user.\n    \n- password (text): The password for the user's account.\n    \n- first_name (text): The first name of the user.\n    \n- middle_name (text): The middle name of the user.\n    \n- last_name (text): The last name of the user.\n    \n- date_of_birth (text): The date of birth of the user.\n    \n- gender (text): The gender of the user.\n    \n- ssn (text): The social security number of the user.\n    \n- address (text): The address of the user.\n    \n- phone_number (text): The phone number of the user.\n    \n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
+									},
+									"response": []
+								},
+								{
+									"name": "/login sysadmin",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"sysadmin\",\r\n    \"password\": \"verySecureAdminPass123!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/login",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"login"
+											]
+										},
+										"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- `token` (string): A JWT for the authenticated user."
+									},
+									"response": []
+								},
+								{
+									"name": "/logout sysadmin",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwtSysAdmin}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"logout"
+											]
+										},
+										"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n- Header:\n    - `Authorization` (string, required): JWT token of the authenticated user.\n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "sysmanager",
+							"item": [
+								{
+									"name": "/register sysmanager",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"sysmanager\",\r\n    \"email\": \"sysmanager@easybank.com\",\r\n    \"password\": \"verySecureMgrPass123!\",\r\n    \"first_name\": \"Blake\",\r\n    \"middle_name\": \"Earl\",\r\n    \"last_name\": \"Johnson\",\r\n    \"date_of_birth\": \"1987-01-29\",\r\n    \"gender\": \"Male\",\r\n    \"ssn\": \"734298386\",\r\n    \"address\": \"834 E. Hill Dr, Bloomington, IN 47403\",\r\n    \"phone_number\": \"+18129673241\",\r\n    \"role\": \"SYSTEM_MANAGER\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/register",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"register"
+											]
+										},
+										"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n    \n- email (text): The email address of the user.\n    \n- password (text): The password for the user's account.\n    \n- first_name (text): The first name of the user.\n    \n- middle_name (text): The middle name of the user.\n    \n- last_name (text): The last name of the user.\n    \n- date_of_birth (text): The date of birth of the user.\n    \n- gender (text): The gender of the user.\n    \n- ssn (text): The social security number of the user.\n    \n- address (text): The address of the user.\n    \n- phone_number (text): The phone number of the user.\n    \n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
+									},
+									"response": []
+								},
+								{
+									"name": "/login sysmanager",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"sysmanager\",\r\n    \"password\": \"verySecureMgrPass123!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/login",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"login"
+											]
+										},
+										"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- `token` (string): A JWT for the authenticated user."
+									},
+									"response": []
+								},
+								{
+									"name": "/logout sysmanager",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwtSysManager}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"logout"
+											]
+										},
+										"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n- Header:\n    - `Authorization` (string, required): JWT token of the authenticated user.\n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "employee",
+							"item": [
+								{
+									"name": "/register employee",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"employee\",\r\n    \"email\": \"employee@easybank.com\",\r\n    \"password\": \"verySecureEmpPass123!\",\r\n    \"first_name\": \"Bob\",\r\n    \"middle_name\": \"Bailey\",\r\n    \"last_name\": \"Harold\",\r\n    \"date_of_birth\": \"1991-07-13\",\r\n    \"gender\": \"Male\",\r\n    \"ssn\": \"49634809\",\r\n    \"address\": \"101 John Lane, Bloomington, IN 47408\",\r\n    \"phone_number\": \"+18129983746\",\r\n    \"role\": \"EMPLOYEE\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/register",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"register"
+											]
+										},
+										"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n    \n- email (text): The email address of the user.\n    \n- password (text): The password for the user's account.\n    \n- first_name (text): The first name of the user.\n    \n- middle_name (text): The middle name of the user.\n    \n- last_name (text): The last name of the user.\n    \n- date_of_birth (text): The date of birth of the user.\n    \n- gender (text): The gender of the user.\n    \n- ssn (text): The social security number of the user.\n    \n- address (text): The address of the user.\n    \n- phone_number (text): The phone number of the user.\n    \n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
+									},
+									"response": []
+								},
+								{
+									"name": "/login employee",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"employee\",\r\n    \"password\": \"verySecureEmpPass123!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/login",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"login"
+											]
+										},
+										"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- `token` (string): A JWT for the authenticated user."
+									},
+									"response": []
+								},
+								{
+									"name": "/logout employee",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwtEmployee}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"logout"
+											]
+										},
+										"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n- Header:\n    - `Authorization` (string, required): JWT token of the authenticated user.\n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "customer",
+							"item": [
+								{
+									"name": "/register customer 1",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"customer1\",\r\n    \"email\": \"customer1@gmail.com\",\r\n    \"password\": \"verySecureCustPass123!\",\r\n    \"first_name\": \"Jennifer\",\r\n    \"middle_name\": \"\",\r\n    \"last_name\": \"Hayes\",\r\n    \"date_of_birth\": \"1995-04-01\",\r\n    \"gender\": \"Female\",\r\n    \"ssn\": \"798326013\",\r\n    \"address\": \"037 Harold Dr, Bloomington, IN 47402\",\r\n    \"phone_number\": \"+18123645342\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/register",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"register"
+											]
+										},
+										"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n    \n- email (text): The email address of the user.\n    \n- password (text): The password for the user's account.\n    \n- first_name (text): The first name of the user.\n    \n- middle_name (text): The middle name of the user.\n    \n- last_name (text): The last name of the user.\n    \n- date_of_birth (text): The date of birth of the user.\n    \n- gender (text): The gender of the user.\n    \n- ssn (text): The social security number of the user.\n    \n- address (text): The address of the user.\n    \n- phone_number (text): The phone number of the user.\n    \n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
+									},
+									"response": []
+								},
+								{
+									"name": "/login customer 1",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"customer1\",\r\n    \"password\": \"verySecureCustPass123!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/login",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"login"
+											]
+										},
+										"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- `token` (string): A JWT for the authenticated user."
+									},
+									"response": []
+								},
+								{
+									"name": "/logout customer 1",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwtCustomer1}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"logout"
+											]
+										},
+										"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n    \n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n    \n- Header:\n    \n    - `Authorization` (string, required): JWT token of the authenticated user.\n        \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
+									},
+									"response": []
+								},
+								{
+									"name": "/register customer 2",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"customer2\",\r\n    \"email\": \"customer2@gmail.com\",\r\n    \"password\": \"verySecureCust2Pass123!\",\r\n    \"first_name\": \"Michael\",\r\n    \"middle_name\": \"\",\r\n    \"last_name\": \"Bailey\",\r\n    \"date_of_birth\": \"1993-08-23\",\r\n    \"gender\": \"Male\",\r\n    \"ssn\": \"863429897\",\r\n    \"address\": \"037 Harold Dr, Bloomington, IN 47402\",\r\n    \"phone_number\": \"+18123644336\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/register",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"register"
+											]
+										},
+										"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n- email (text): The email address of the user.\n- password (text): The password for the user's account.\n- first_name (text): The first name of the user.\n- middle_name (text): The middle name of the user.\n- last_name (text): The last name of the user.\n- date_of_birth (text): The date of birth of the user.\n- gender (text): The gender of the user.\n- ssn (text): The social security number of the user.\n- address (text): The address of the user.\n- phone_number (text): The phone number of the user.\n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
+									},
+									"response": []
+								},
+								{
+									"name": "/login customer 2",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"customer2\",\r\n    \"password\": \"verySecureCust2Pass123!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/login",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"login"
+											]
+										},
+										"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n- Content-Type: application/json\n- `token` (string): A JWT for the authenticated user."
+									},
+									"response": []
+								},
+								{
+									"name": "/logout customer 2",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwtCustomer2}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"logout"
+											]
+										},
+										"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n    \n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n    \n- Header:\n    \n    - `Authorization` (string, required): JWT token of the authenticated user.\n        \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "merchant",
+							"item": [
+								{
+									"name": "/register merchant",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"merchant1\",\r\n    \"email\": \"merchant1@business.org\",\r\n    \"password\": \"verySecureMerchPass123!\",\r\n    \"business_name\": \"Bloom Merch\",\r\n    \"business_phone\": \"+18123456789\",\r\n    \"business_doi\": \"2009-01-02\",\r\n    \"ein\": \"538967342\",\r\n    \"address\": \"1293 S. Walnut St, Bloomington, IN 47403\",\r\n    \"owner_name\": \"Danielle Andre Lynch\",\r\n    \"owner_dob\": \"1992-11-14\",\r\n    \"owner_gender\": \"Female\",\r\n    \"owner_ssn\": \"104329837\",\r\n    \"owner_phone\": \"+18124967382\",\r\n    \"role\": \"MERCHANT\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/register",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"register"
+											]
 										}
-									}
+									},
+									"response": []
 								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/register",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"register"
-									]
+								{
+									"name": "/login merchant",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"username\": \"merchant1\",\r\n    \"password\": \"verySecureMerchPass123!\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/login",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"login"
+											]
+										},
+										"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n- Content-Type: application/json\n- `token` (string): A JWT for the authenticated user."
+									},
+									"response": []
 								},
-								"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n    \n- email (text): The email address of the user.\n    \n- password (text): The password for the user's account.\n    \n- first_name (text): The first name of the user.\n    \n- middle_name (text): The middle name of the user.\n    \n- last_name (text): The last name of the user.\n    \n- date_of_birth (text): The date of birth of the user.\n    \n- gender (text): The gender of the user.\n    \n- ssn (text): The social security number of the user.\n    \n- address (text): The address of the user.\n    \n- phone_number (text): The phone number of the user.\n    \n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
-							},
-							"response": []
-						},
-						{
-							"name": "/register External",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"alice01\",\r\n    \"email\": \"alice01@gmail.com\",\r\n    \"password\": \"Iamn0tB0b!\",\r\n    \"first_name\": \"Alice\",\r\n    \"middle_name\": \"Jane\",\r\n    \"last_name\": \"Doe\",\r\n    \"date_of_birth\": \"1989-03-15\",\r\n    \"gender\": \"Feale\",\r\n    \"ssn\": \"200243298\",\r\n    \"address\": \"123 E Lane, Wonderland, CX 32906\",\r\n    \"phone_number\": \"+11235439857\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/register",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"register"
-									]
-								},
-								"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n    \n- email (text): The email address of the user.\n    \n- password (text): The password for the user's account.\n    \n- first_name (text): The first name of the user.\n    \n- middle_name (text): The middle name of the user.\n    \n- last_name (text): The last name of the user.\n    \n- date_of_birth (text): The date of birth of the user.\n    \n- gender (text): The gender of the user.\n    \n- ssn (text): The social security number of the user.\n    \n- address (text): The address of the user.\n    \n- phone_number (text): The phone number of the user.\n    \n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
-							},
-							"response": []
-						},
-						{
-							"name": "/register External 2",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"bob01\",\r\n    \"email\": \"bob01@gmail.com\",\r\n    \"password\": \"Iamn0tAl1ce!\",\r\n    \"first_name\": \"Bob\",\r\n    \"middle_name\": \"John\",\r\n    \"last_name\": \"Doe\",\r\n    \"date_of_birth\": \"1989-01-07\",\r\n    \"gender\": \"Male\",\r\n    \"ssn\": \"200241234\",\r\n    \"address\": \"345 W Lane, Wonderland, CX 32907\",\r\n    \"phone_number\": \"+11235419755\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/register",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"register"
-									]
-								},
-								"description": "### Register\n\nThis endpoint allows users to register for a new account.\n\n#### Request\n\nThe request should be sent via an HTTP POST method to [http://127.0.0.1:5000/api/v1/auth/register](http://127.0.0.1:5000/api/v1/auth/register) with the following parameters in the request body:\n\n- username (text): The username of the user.\n- email (text): The email address of the user.\n- password (text): The password for the user's account.\n- first_name (text): The first name of the user.\n- middle_name (text): The middle name of the user.\n- last_name (text): The last name of the user.\n- date_of_birth (text): The date of birth of the user.\n- gender (text): The gender of the user.\n- ssn (text): The social security number of the user.\n- address (text): The address of the user.\n- phone_number (text): The phone number of the user.\n- role (text): The role of the user.\n    \n\n#### Response\n\n- Status: `201`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"\"\n}\n\n ```"
-							},
-							"response": []
-						},
-						{
-							"name": "/login Internal",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"admin1!\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/login",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"login"
-									]
-								},
-								"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- `token` (string): A JWT for the authenticated user."
-							},
-							"response": []
-						},
-						{
-							"name": "/login External",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"alice01\",\r\n    \"password\": \"Iamn0tB0b!\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/login",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"login"
-									]
-								},
-								"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- `token` (string): A JWT for the authenticated user."
-							},
-							"response": []
-						},
-						{
-							"name": "/login External 2",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"bob01\",\r\n    \"password\": \"Iamn0tAl1ce!\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/login",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"login"
-									]
-								},
-								"description": "#### Login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n- `password` (string, required): The password of the user.\n    \n\n#### Response\n\n- Status: 200\n- Content-Type: application/json\n- `token` (string): A JWT for the authenticated user."
-							},
-							"response": []
-						},
-						{
-							"name": "/logout Internal",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"logout"
-									]
-								},
-								"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n- Header:\n    - `Authorization` (string, required): JWT token of the authenticated user.\n\n#### Response\n\n- Status: `200`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n- Content-Type: `application/json`\n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
-							},
-							"response": []
-						},
-						{
-							"name": "/logout External",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtExternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"logout"
-									]
-								},
-								"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n    \n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n    \n- Header:\n    \n    - `Authorization` (string, required): JWT token of the authenticated user.\n        \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
-							},
-							"response": []
-						},
-						{
-							"name": "/logout External 2",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtExternal2}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"auth",
-										"logout"
-									]
-								},
-								"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n    \n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n    \n- Header:\n    \n    - `Authorization` (string, required): JWT token of the authenticated user.\n        \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
-							},
-							"response": []
+								{
+									"name": "/logout merchant",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwtMerchant}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://127.0.0.1:5000/api/v1/auth/logout",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "5000",
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"logout"
+											]
+										},
+										"description": "### Logout\n\nThis endpoint is used to log out an authenticated user.\n\n#### Request\n\n- Method: `POST`\n    \n- URL: `http://127.0.0.1:5000/api/v1/auth/logout`\n    \n- Header:\n    \n    - `Authorization` (string, required): JWT token of the authenticated user.\n        \n\n#### Response\n\n- Status: `200`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Logged out\"\n}\n\n ```\n\n---\n\n- Status: `400`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"message\": \"Bad request\"\n}\n\n ```\n\n---\n\n- Status: `401`\n    \n- Content-Type: `application/json`\n    \n- Data:\n    \n\n```\n{\n    \"name\": \"<error_name>\",\n    \"message\": \"<error_msg>\"\n}\n\n ```"
+									},
+									"response": []
+								}
+							]
 						},
 						{
 							"name": "/otp/enroll",
@@ -449,7 +779,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									}
 								],
@@ -474,7 +804,7 @@
 							"response": []
 						},
 						{
-							"name": "/pending/account",
+							"name": "/",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -485,7 +815,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/review/pending/account",
+									"raw": "http://127.0.0.1:5000/api/v1/review/?status=REJECTED&type=HIGH VALUE TXN",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -498,168 +828,17 @@
 										"api",
 										"v1",
 										"review",
-										"pending",
-										"account"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/pending/profile",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/review/pending/profile",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										""
 									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"review",
-										"pending",
-										"profile"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/pending/transaction",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/review/pending/transaction",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"review",
-										"pending",
-										"transaction"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/approved/account",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/review/approved/account",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"review",
-										"approved",
-										"account"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/approved/profile",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/review/approved/profile",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"review",
-										"approved",
-										"profile"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "/approved/transaction",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwtInternal}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://127.0.0.1:5000/api/v1/review/approved/transaction",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5000",
-									"path": [
-										"api",
-										"v1",
-										"review",
-										"approved",
-										"transaction"
+									"query": [
+										{
+											"key": "status",
+											"value": "REJECTED"
+										},
+										{
+											"key": "type",
+											"value": "HIGH VALUE TXN"
+										}
 									]
 								}
 							},
@@ -672,7 +851,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysManager}}",
 										"type": "text"
 									}
 								],
@@ -695,7 +874,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "{{reviewId}}"
 										}
 									]
 								}
@@ -709,13 +888,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"reviewer\": \"\",\n    \"reviewObject\": \"\",\n    \"type\": \"\",\n    \"status\": \"\",\n    \"approvedBy\": {\n        \"user\": \"\",\n        \"timestamp\": \"\"\n    }\n}",
+									"raw": "{\n    \"reviewer\": \"\",\n    \"approvedBy\": {\n        \"user\": \"\",\n        \"timestamp\": \"\"\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -755,7 +934,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									}
 								],
@@ -792,13 +971,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysManager}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"reviewer\": \"\",\n    \"reviewObject\": \"\",\n    \"type\": \"\",\n    \"status\": \"\",\n    \"approvedBy\": {\n        \"user\": \"\",\n        \"timestamp\": \"\"\n    }\n}",
+									"raw": "{\n    \"reviewer\": \"\",\n    \"reviewObject\": \"\",\n    \"type\": \"\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -832,19 +1011,10 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysManager}}",
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"reviewer\": \"\",\n    \"reviewObject\": \"\",\n    \"type\": \"\",\n    \"status\": \"\",\n    \"approvedBy\": {\n        \"user\": \"\",\n        \"timestamp\": \"\"\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
 									"raw": "http://127.0.0.1:5000/api/v1/review/authorize/:id",
 									"protocol": "http",
@@ -865,7 +1035,45 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "{{reviewId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/reject/:id",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtSysManager}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/review/reject/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"review",
+										"reject",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{reviewId}}"
 										}
 									]
 								}
@@ -994,7 +1202,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									}
 								],
@@ -1026,7 +1234,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									},
 									{
@@ -1070,13 +1278,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtCustomer1}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"from\": {{sender}},\r\n    \"to\": {{beneficiary}},\r\n    \"amount\": 300\r\n}",
+									"raw": "{\r\n    \"from\": {{sender}},\r\n    \"to\": {{beneficiary}},\r\n    \"amount\": 11000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1105,13 +1313,102 @@
 							"response": []
 						},
 						{
+							"name": "/new 2",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtCustomer2}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"from\": {{beneficiary}},\r\n    \"to\": {{sender}},\r\n    \"amount\": 11000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/transaction/new",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"transaction",
+										"new"
+									]
+								},
+								"description": "#### !!! WIP !!!\n\nThis request creates a new transaction."
+							},
+							"response": []
+						},
+						{
+							"name": "/pay/:id",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtCustomer1}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"from\": {{sender}},\r\n    \"amount\": 50000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/transaction/pay/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"transaction",
+										"pay",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{merchPayId}}"
+										}
+									]
+								},
+								"description": "#### !!! WIP !!!\n\nThis request creates a new transaction."
+							},
+							"response": []
+						},
+						{
 							"name": "/:id",
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtCustomer1}}",
 										"type": "text"
 									}
 								],
@@ -1149,7 +1446,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									}
 								],
@@ -1202,7 +1499,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									}
 								],
@@ -1235,7 +1532,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtCustomer1}}",
 										"type": "text"
 									}
 								],
@@ -1259,7 +1556,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "{{accountId}}"
 										}
 									]
 								},
@@ -1274,7 +1571,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									},
 									{
@@ -1319,7 +1616,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysManager}}",
 										"type": "text"
 									}
 								],
@@ -1358,7 +1655,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									}
 								],
@@ -1391,7 +1688,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtCustomer1}}",
 										"type": "text"
 									}
 								],
@@ -1415,7 +1712,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "{{profileId}}"
 										}
 									]
 								},
@@ -1430,7 +1727,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									},
 									{
@@ -1475,7 +1772,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtExternal}}",
+										"value": "{{jwtCustomer1}}",
 										"type": "text"
 									}
 								],
@@ -1523,7 +1820,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwtInternal}}",
+										"value": "{{jwtSysAdmin}}",
 										"type": "text"
 									}
 								],
@@ -1552,6 +1849,44 @@
 									]
 								},
 								"description": "This request allows the currently authenticated user to raise an profile deletion request."
+							},
+							"response": []
+						},
+						{
+							"name": "/payId/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwtCustomer1}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/v1/user/payId/:id",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"payId",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{merchantId}}"
+										}
+									]
+								}
 							},
 							"response": []
 						}
