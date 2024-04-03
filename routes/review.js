@@ -13,13 +13,14 @@ const {
 const {
     authenticate,
     isSysAdminOrSysMgr,
+    isSysAdmin,
 } = require('../middleware/auth');
 
 const router = express.Router();
 
 router.all('*', authenticate);
 
-router.get('/all', isSysAdminOrSysMgr, getAllReviews);
+router.get('/all', isSysAdmin, getAllReviews);
 
 router.get('/', isSysAdminOrSysMgr, getReviewsByTypeAndStatus);
 
