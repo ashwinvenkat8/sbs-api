@@ -125,6 +125,22 @@ const deleteProfile = async (req, res, next) => {
     }
 };
 
+const getPaymentId = async (req, res, next) => {
+    try {
+        const paymentId = await User.findById(req.params.id, { 'attributes.payment_id': 1 });
+
+        if(!paymentId) {
+            res.status(404).json({ message: 'Merchant not found' });
+            return;
+        }
+
+        res.status(200).json({ message: paymentId });
+
+    } catch(err) {
+        next(err);
+    }
+}
+
 module.exports = {
     getAllAccounts,
     getAccount,
@@ -132,5 +148,6 @@ module.exports = {
     getAllProfiles,
     getProfile,
     updateProfile,
-    deleteProfile
+    deleteProfile,
+    getPaymentId
 };

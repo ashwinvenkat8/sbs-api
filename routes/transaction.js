@@ -2,6 +2,7 @@ const express = require('express');
 
 const {
     createTransaction,
+    createPayment,
     getAllTransactions,
     getUserTransactions,
     getTransaction,
@@ -13,7 +14,8 @@ const {
     isSysMgr,
     isExternalOrSysMgr,
     isSysAdminOrSysMgr,
-    isReviewApproved
+    isReviewApproved,
+    isCustomer
 } = require('../middleware/auth');
 
 const router = express.Router();
@@ -24,6 +26,7 @@ router.get('/all', isSysAdminOrSysMgr, getAllTransactions);
 router.get('/:userId/all', isSysMgr, isReviewApproved, getUserTransactions);
 
 router.post('/new', isExternal, createTransaction);
+router.post('/pay/:id', isCustomer, createPayment);
 
 router.route('/:id')
     .get(isExternalOrSysMgr, getTransaction)
