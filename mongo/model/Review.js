@@ -43,6 +43,21 @@ const ReviewSchema = new mongoose.Schema({
             type: Date,
             default: null
         }
+    },
+    rejectedBy: {
+        user: {
+            type: mongoose.Types.ObjectId,
+            ref: 'User',
+            default: null
+        },
+        timestamp: {
+            type: Date,
+            default: null
+        },
+        reason: {
+            type: String,
+            default: null
+        }
     }
 }, { timestamps: true });
 

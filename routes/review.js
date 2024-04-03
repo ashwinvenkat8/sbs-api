@@ -14,7 +14,8 @@ const {
     requestReview,
     authorizeReview,
     getPendingHVTxnReviews,
-    getApprovedHVTxnReviews
+    getApprovedHVTxnReviews,
+    rejectReview
 } = require('../controllers/review');
 const {
     authenticate,
@@ -44,5 +45,6 @@ router.route('/:id')
 
 router.post('/request', isSysAdminOrSysMgr, requestReview);
 router.patch('/authorize/:id', authorizeReview);
+router.patch('/reject/:id', rejectReview);
 
 module.exports = router;

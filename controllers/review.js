@@ -284,6 +284,67 @@ const authorizeReview = async (req, res, next) => {
     }
 };
 
+const rejectReview = async (req, res, next) => {
+    try {
+        const review = await Review.findById(req.params.id);
+
+        if(!review) {
+            res.status(404).json({ error: 'Review not found' });
+            return;
+        }
+
+        if(review.status !== 'PENDING APPROVAL') {
+            res.status(400).json({ error: 'Review is not pending approval' });
+            return;
+        }
+
+        if(review.type === 'HIGH VALUE TXN') {
+            if(req.userRole !== 'SYSTEM_MANAGER') {
+                res.status(403).json({ error: 'Insufficient privilege to authorize high-value transactions' });
+                return;
+            } else {
+                review.reviewer = req.userId;
+                review.status = 'REJECTED';
+                review.rejectedBy.user = req.userId;
+                review.rejectedBy.timestamp = new Date().toISOString();
+                await review.save();
+
+                const senderTxn = await Transaction.findById(review.reviewObject);
+                const beneficiaryTxn = await Transaction.findOne({ to: senderTxn?.to, review: review._id, type: 'CREDIT' });
+
+                if(!senderTxn) {
+                    res.status(404).json({ error: 'Debit transaction not found' });
+                    return;
+                }
+                if(!beneficiaryTxn) {
+                    res.status(404).json({ error: 'Credit transaction not found' });
+                    return;
+                }
+
+                senderTxn.status = 'REJECTED';
+                beneficiaryTxn.status = 'REJECTED';
+
+                await senderTxn.save();
+                await beneficiaryTxn.save();
+
+                res.status(200).json({ message: 'Transaction rejected' });
+                return;
+            }
+        }
+
+        review.reviewer = req.userId;
+        review.status = 'REJECTED';
+        review.approvedBy.user = req.userId;
+        review.approvedBy.timestamp = new Date().toISOString();
+        await review.save();
+
+        res.status(200).json({ message: 'Review rejected' });
+
+    } catch(err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getAllReviews,
     getPendingAccountReviews,
@@ -298,5 +359,6 @@ module.exports = {
     updateReview,
     deleteReview,
     requestReview,
-    authorizeReview
+    authorizeReview,
+    rejectReview
 };
