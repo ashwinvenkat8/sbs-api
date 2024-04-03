@@ -1,6 +1,7 @@
 const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const connectDb = require('./mongo/connectDb');
 const authRoutes = require('./routes/auth');
@@ -23,6 +24,7 @@ app.use(cors({
     origin: "*",
     credentials: false
 }));
+app.use(mongoSanitize())
 
 // Express.js also provides a method to reduce fingerprinting: app.disable('x-powered-by');
 // (https://stackoverflow.com/questions/5867199/cant-get-rid-of-header-x-powered-byexpress/12484642#12484642)
