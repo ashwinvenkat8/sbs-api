@@ -9,6 +9,7 @@ const {
     requestReview,
     authorizeReview,
     rejectReview,
+    getApprovedReview,
 } = require('../controllers/review');
 const {
     authenticate,
@@ -21,8 +22,8 @@ const router = express.Router();
 router.all('*', authenticate);
 
 router.get('/all', isSysAdmin, getAllReviews);
-
-router.get('/', isSysAdminOrSysMgr, getReviewsByTypeAndStatus);
+router.get('/filter', isSysAdminOrSysMgr, getReviewsByTypeAndStatus);
+router.get('/approved/:id', isSysAdminOrSysMgr, getApprovedReview);
 
 router.route('/:id')
     .get(getReview)

@@ -84,6 +84,21 @@ const isSysAdmin = async (req, res, next) => {
     next();
 };
 
+const isNotSysAdmin = async (req, res, next) => {
+    const token = req.headers?.authorization;
+    if(!token) {
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
+    }
+
+    if(req.userRole === 'SYSTEM_ADMIN') {
+        res.status(403).json({ message: 'Access denied' });
+        return;
+    }
+    
+    next();
+};
+
 const isSysMgr = async (req, res, next) => {
     const token = req.headers?.authorization;
     if(!token) {
@@ -152,6 +167,22 @@ const isInternal = async (req, res, next) => {
     }
 
     const allowedRoles = ['EMPLOYEE', 'SYSTEM_MANAGER', 'SYSTEM_ADMIN'];
+    if(!allowedRoles.includes(req.userRole)) {
+        res.status(403).json({ message: 'Access denied' });
+        return;
+    }
+    
+    next();
+};
+
+const isCustomerOrEmployee = async (req, res, next) => {
+    const token = req.headers?.authorization;
+    if(!token) {
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
+    }
+
+    const allowedRoles = ['CUSTOMER', 'EMPLOYEE'];
     if(!allowedRoles.includes(req.userRole)) {
         res.status(403).json({ message: 'Access denied' });
         return;
@@ -243,11 +274,13 @@ module.exports = {
     authenticate,
     isEmployee,
     isSysAdmin,
+    isNotSysAdmin,
     isSysMgr,
     isCustomer,
     isMerchant,
     isExternal,
     isInternal,
+    isCustomerOrEmployee,
     isExternalOrEmployee,
     isExternalOrSysMgr,
     isSysAdminOrSysMgr,

@@ -1,6 +1,7 @@
 const Account = require('../mongo/model/Account');
 const Review = require('../mongo/model/Review');
 const Transaction = require('../mongo/model/Transaction');
+const User = require('../mongo/model/User');
 
 const { doTransaction } = require('./transaction');
 
@@ -45,6 +46,64 @@ const getReviewsByTypeAndStatus = async (req, res, next) => {
 
         res.status(200).json(reviews);
 
+    } catch(err) {
+        next(err);
+    }
+};
+
+const getApprovedReview = async (req, res, next) => {
+    try {
+        const review = await Review.findById(req.params.id);
+
+        if(!review) {
+            res.status(404).json({ error: 'Review not found' });
+            return;
+        }
+        if(review.status !== 'APPROVED') {
+            res.status(400).json({ error: 'Review is not approved' });
+            return;
+        }
+
+        switch(review.type) {
+            case 'TRANSACTION': {
+                const transactions = await Account.findOne({ _id: review.reviewObject }, { transactions: 1 });
+                
+                if(!transactions) {
+                    res.status(404).json( { error: 'Transactions not found' });
+                } else {
+                    res.status(200).json(transactions);
+                }
+                
+                break;
+            }
+            case 'PROFILE': {
+                const fieldsToProject = { 'otp.secret': 0, password: 0, 'sessions.token': 0 };
+                const profile = await User.findOne({ _id: review.reviewObject }, fieldsToProject);
+                
+                if(!profile) {
+                    res.status(404).json( { error: 'Profile not found' });
+                } else {
+                    res.status(200).json(profile);
+                }
+                
+                break;
+            }
+            case 'ACCOUNT': {
+                const fieldsToProject = { user: 0, transactions: 0 };
+                const account = await Account.findOne({ _id: review.reviewObject }, fieldsToProject);
+                
+                if(!account) {
+                    res.status(404).json( { error: 'Account not found' });
+                } else {
+                    res.status(200).json(account);
+                }
+                
+                break;
+            }
+            default: {
+                res.status(400).json({ error: 'Invalid review type' });
+            }
+        }
     } catch(err) {
         next(err);
     }
@@ -119,6 +178,24 @@ const requestReview = async (req, res, next) => {
             status: 'PENDING APPROVAL'
         });
         await newReview.save();
+
+        switch(newReview.type) {
+            case 'ACCOUNT':
+            case 'TRANSACTION': {
+                await Account.updateOne({ _id: newReview.reviewObject }, { review: newReview._id });
+                break;
+            }
+            case 'PROFILE': {
+                await User.updateOne({ _id: newReview.reviewObject }, { review: newReview._id });
+                break;
+            }
+            default: {
+                res.status(400).json({ error: 'Invalid review type' });
+                return;
+            }
+        }
+
+        res.status(201).json({ message: 'Review request created' });
 
     } catch(err) {
         next(err);
@@ -254,6 +331,7 @@ const rejectReview = async (req, res, next) => {
 module.exports = {
     getAllReviews,
     getReviewsByTypeAndStatus,
+    getApprovedReview,
     getReview,
     updateReview,
     deleteReview,
