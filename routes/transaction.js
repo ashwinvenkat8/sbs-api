@@ -7,15 +7,17 @@ const {
     getUserTransactions,
     getTransaction,
     updateTransaction,
+    deleteTransaction
 } = require('../controllers/transaction');
 const {
     authenticate,
+    isEmployee,
     isSysMgr,
-    isExternalOrSysMgr,
-    isSysAdminOrSysMgr,
+    isNotSysAdmin,
     isReviewApproved,
-    isCustomer,
-    isExternalOrEmployee
+    isCustomerOrEmployee,
+    isExternalOrEmployee,
+    isSysAdminOrSysMgr
 } = require('../middleware/auth');
 
 const router = express.Router();
@@ -26,10 +28,11 @@ router.get('/all', isSysAdminOrSysMgr, getAllTransactions);
 router.get('/:userId/all', isSysMgr, isReviewApproved, getUserTransactions);
 
 router.post('/new', isExternalOrEmployee, createTransaction);
-router.post('/pay/:id', isCustomer, createPayment);
+router.post('/pay/:id', isCustomerOrEmployee, createPayment);
 
 router.route('/:id')
-    .get(isExternalOrSysMgr, getTransaction)
-    .patch(isExternalOrSysMgr, updateTransaction);
+    .get(isNotSysAdmin, getTransaction)
+    .patch(isEmployee, updateTransaction)
+    .delete(isEmployee, deleteTransaction);
 
 module.exports = router;

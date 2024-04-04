@@ -285,6 +285,15 @@ const updateTransaction = async (req, res, next) => {
     }
 };
 
+const deleteTransaction = async (req, res, next) => {
+    try {
+        await Transaction.deleteOne({ _id: req.params.id });
+        res.status(200).json({ message: 'Transaction deleted' });
+    } catch(err) {
+        next(err);
+    }
+};
+
 module.exports = {
     doTransaction,
     createTransaction,
@@ -292,5 +301,6 @@ module.exports = {
     getAllTransactions,
     getUserTransactions,
     getTransaction,
-    updateTransaction
+    updateTransaction,
+    deleteTransaction
 };
