@@ -17,6 +17,7 @@ const getAllReviews = async (req, res, next) => {
         res.status(200).json(reviews);
 
     } catch(err) {
+        console.log("getAllReviews() @ controllers/review.js");
         next(err);
     }
 };
@@ -47,6 +48,7 @@ const getReviewsByTypeAndStatus = async (req, res, next) => {
         res.status(200).json(reviews);
 
     } catch(err) {
+        console.log("getReviewsByTypeAndStatus() @ controllers/review.js");
         next(err);
     }
 };
@@ -105,6 +107,7 @@ const getApprovedReview = async (req, res, next) => {
             }
         }
     } catch(err) {
+        console.log("getApprovedReview() @ controllers/review.js");
         next(err);
     }
 };
@@ -121,6 +124,7 @@ const getReview = async (req, res, next) => {
         res.status(200).json(review);
 
     } catch(err) {
+        console.log("getReview() @ controllers/review.js");
         next(err);
     }
 };
@@ -154,6 +158,7 @@ const updateReview = async (req, res, next) => {
         res.status(200).json({ message: 'Review updated' });
 
     } catch(err) {
+        console.log("updateReview() @ controllers/review.js");
         next(err);
     }
 };
@@ -163,6 +168,7 @@ const deleteReview = async (req, res, next) => {
         await Review.deleteOne({ _id: req.params.id });
         res.status(200).json({ message: 'Review deleted' });
     } catch(err) {
+        console.log("deleteReview() @ controllers/review.js");
         next(err);
     }
 };
@@ -198,6 +204,7 @@ const requestReview = async (req, res, next) => {
         res.status(201).json({ message: 'Review request created' });
 
     } catch(err) {
+        console.log("requestReview() @ controllers/review.js");
         next(err);
     }
 };
@@ -263,6 +270,7 @@ const authorizeReview = async (req, res, next) => {
         res.status(200).json({ message: 'Review authorized' });
     
     } catch(err) {
+        console.log("authorizeReview() @ controllers/review.js");
         next(err);
     }
 };
@@ -324,6 +332,7 @@ const rejectReview = async (req, res, next) => {
         res.status(200).json({ message: 'Review rejected' });
 
     } catch(err) {
+        console.log("rejectReview() @ controllers/review.js");
         next(err);
     }
 };

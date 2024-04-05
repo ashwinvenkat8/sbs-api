@@ -25,10 +25,7 @@ const appStatus = async (req, res, next) => {
             });
         }
     } catch(err) {
-        res.status(500).json({
-            status: 'ERROR',
-            message: 'An error occurred while checking the overall system status. Please try again later.'
-        });
+        console.log("appStatus() @ controllers/status.js");
         next(err);
     }
 };

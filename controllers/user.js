@@ -18,6 +18,7 @@ const getAllAccounts = async (req, res, next) => {
         res.status(200).json(accounts);
 
     } catch(err) {
+        console.log("getAllAccounts() @ controllers/user.js");
         next(err);
     }
 };
@@ -39,6 +40,7 @@ const getAccount = async (req, res, next) => {
         res.status(200).json(account);
 
     } catch(err) {
+        console.log("getAccount() @ controllers/user.js");
         next(err);
     }
 };
@@ -48,6 +50,7 @@ const deleteAccount = async (req, res, next) => {
         await Account.deleteOne({ _id: req.params.id });
         res.status(200).json({ message: 'Account deleted' });
     } catch(err) {
+        console.log("deleteAccount() @ controllers/user.js");
         next(err);
     }
 };
@@ -64,6 +67,7 @@ const getAllProfiles = async (req, res, next) => {
         res.status(200).json(profiles);
 
     } catch(err) {
+        console.log("getAllProfiles() @ controllers/user.js");
         next(err);
     }
 };
@@ -80,6 +84,7 @@ const getProfile = async (req, res, next) => {
         res.status(200).json(user);
 
     } catch(err) {
+        console.log("getProfile() @ controllers/user.js");
         next(err);
     }
 };
@@ -112,6 +117,7 @@ const updateProfile = async (req, res, next) => {
         res.status(200).json({ message: 'User profile updated' });
 
     } catch(err) {
+        console.log("updateProfile() @ controllers/user.js");
         next(err);
     }
 };
@@ -121,6 +127,7 @@ const deleteProfile = async (req, res, next) => {
         await User.deleteOne({ _id: req.params.id });
         res.status(200).json({ message: 'User profile deleted' });
     } catch(err) {
+        console.log("deleteProfile() @ controllers/user.js");
         next(err);
     }
 };
@@ -137,6 +144,7 @@ const getPaymentId = async (req, res, next) => {
         res.status(200).json({ message: paymentId });
 
     } catch(err) {
+        console.log("getPaymentId() @ controllers/user.js");
         next(err);
     }
 }

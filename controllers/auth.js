@@ -68,7 +68,6 @@ const register = async (req, res, next) => {
         res.status(201).json({ message: 'User registered successfully' });
 
     } catch (err) {
-        console.log(err.stack);
         next(err);
     }
 };
@@ -113,7 +112,6 @@ const login = async (req, res, next) => {
         res.json({ token: currentSession.token });
 
     } catch (err) {
-        console.log(err.stack);
         next(err);
     }
 };
@@ -128,7 +126,6 @@ const logout = async (req, res, next) => {
         res.status(200).json({ message: 'Logged out' });
 
     } catch (err) {
-        console.error(err.stack);
         next(err);
     }
 };
@@ -172,7 +169,6 @@ const generateQR = async (req, res, next) => {
         res.status(200).send({ url: totp.toString() });
 
     } catch (err) {
-        console.log(err.stack);
         next(err);
     }
 };
@@ -217,7 +213,6 @@ const verifyOTP = async (req, res, next) => {
             return;
         }
     } catch (err) {
-        console.log(err.stack);
         next(err);
     }
 };
@@ -263,8 +258,7 @@ const validateOTP = async (req, res) => {
         }
 
     } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: 'Internal Server Error' });
+        next(err);
     }
 };
 

@@ -28,6 +28,7 @@ const doTransaction = async (sender, beneficiary, amount) => {
         return { statusCode: 200, statusMessage: 'Transaction completed', txnStatus: 'COMPLETED' };
     
     } catch(err) {
+        console.log("doTransaction() @ controllers/transaction.js");
         next(err);
     }
 };
@@ -118,6 +119,7 @@ const createTransaction = async (req, res, next) => {
             res.status(statusCode).json({ message: statusMessage });
         }
     } catch(err) {
+        console.log("createTransaction() @ controllers/transaction.js");
         next(err);
     }
 };
@@ -198,6 +200,7 @@ const createPayment = async (req, res, next) => {
             res.status(statusCode).json({ message: statusMessage });
         }
     } catch(err) {
+        console.log("createPayment() @ controllers/transaction.js");
         next(err);
     }
 };
@@ -220,6 +223,7 @@ const getAllTransactions = async (req, res, next) => {
         res.status(200).json(transactions);
 
     } catch(err) {
+        console.log("getAllTransactions() @ controllers/transaction.js");
         next(err);
     }
 };
@@ -236,6 +240,7 @@ const getUserTransactions = async (req, res, next) => {
         res.status(200).json(transactions);
 
     } catch(err) {
+        console.log("getUserTransactions() @ controllers/transaction.js");
         next(err);
     }
 }
@@ -252,6 +257,7 @@ const getTransaction = async (req, res, next) => {
         res.status(200).json(transaction);
 
     } catch(err) {
+        console.log("getTransaction() @ controllers/transaction.js");
         next(err);
     }
 };
@@ -281,6 +287,7 @@ const updateTransaction = async (req, res, next) => {
         res.status(200).json({ message: 'Transaction updated' });
 
     } catch(err) {
+        console.log("updateTransaction() @ controllers/transaction.js");
         next(err);
     }
 };
@@ -290,6 +297,7 @@ const deleteTransaction = async (req, res, next) => {
         await Transaction.deleteOne({ _id: req.params.id });
         res.status(200).json({ message: 'Transaction deleted' });
     } catch(err) {
+        console.log("deleteTransaction() @ controllers/transaction.js");
         next(err);
     }
 };

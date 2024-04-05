@@ -23,7 +23,7 @@ const authenticate = async (req, res, next) => {
         next();
         
     } catch(err) {
-        console.log(`${typeof(err)} - ${err.stack}`);
+        console.log("authenticate() @ middleware/auth.js");
         
         if(err.name === 'TokenExpiredError') {
             const activeSession = await User.findOne(
@@ -266,6 +266,7 @@ const isReviewApproved = async (req, res, next) => {
         next();
     
     } catch(err) {
+        console.log("isReviewApproved() @ middleware/auth.js");
         next(err);
     }
 };
