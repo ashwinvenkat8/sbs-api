@@ -6,7 +6,13 @@ const reviewStatus = [
     'REJECTED'
 ];
 
-const reviewType = ['HIGH VALUE TXN', 'TRANSACTION', 'PROFILE', 'ACCOUNT'];
+const reviewType = [
+    'HIGH VALUE TXN',
+    'PAYMENT',
+    'TRANSACTION',
+    'PROFILE',
+    'ACCOUNT'
+];
 
 const ReviewSchema = new mongoose.Schema({
     reviewer: {

@@ -191,6 +191,22 @@ const isCustomerOrEmployee = async (req, res, next) => {
     next();
 };
 
+const isMerchantOrEmployee = async (req, res, next) => {
+    const token = req.headers?.authorization;
+    if(!token) {
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
+    }
+
+    const allowedRoles = ['MERCHANT', 'EMPLOYEE'];
+    if(!allowedRoles.includes(req.userRole)) {
+        res.status(403).json({ message: 'Access denied' });
+        return;
+    }
+    
+    next();
+};
+
 const isExternalOrEmployee = async (req, res, next) => {
     const token = req.headers?.authorization;
     if(!token) {
@@ -282,6 +298,7 @@ module.exports = {
     isExternal,
     isInternal,
     isCustomerOrEmployee,
+    isMerchantOrEmployee,
     isExternalOrEmployee,
     isExternalOrSysMgr,
     isSysAdminOrSysMgr,

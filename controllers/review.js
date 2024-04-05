@@ -26,8 +26,8 @@ const getReviewsByTypeAndStatus = async (req, res, next) => {
     try {
         const validStatus = ['PENDING APPROVAL', 'APPROVED', 'REJECTED'];
         const validType = ['HIGH VALUE TXN', 'TRANSACTION', 'PROFILE', 'ACCOUNT'];
-        const reviewStatus = req.query.status;
-        const reviewType = req.query.type;
+        const reviewStatus = req.query?.status;
+        const reviewType = req.query?.type;
 
         if(!validStatus.includes(reviewStatus)) {
             res.status(400).json({ error: 'Invalid review status' });
@@ -235,12 +235,48 @@ const authorizeReview = async (req, res, next) => {
                 await review.save();
 
                 const senderTxn = await Transaction.findById(review.reviewObject);
-                const beneficiaryTxn = await Transaction.findOne({ to: senderTxn?.to, review: review._id, type: 'CREDIT' });
-
                 if(!senderTxn) {
                     res.status(404).json({ error: 'Debit transaction not found' });
                     return;
                 }
+                
+                const beneficiaryTxn = await Transaction.findOne({ to: senderTxn?.to, review: review._id, type: 'CREDIT' });
+                if(!beneficiaryTxn) {
+                    res.status(404).json({ error: 'Credit transaction not found' });
+                    return;
+                }
+
+                const sender = await Account.findById(senderTxn?.from);
+                const beneficiary = await Account.findById(senderTxn?.to);
+                let { statusCode, statusMessage, txnStatus } = await doTransaction(sender, beneficiary, senderTxn.amount);
+
+                senderTxn.status = txnStatus;
+                beneficiaryTxn.status = txnStatus;
+
+                await senderTxn.save();
+                await beneficiaryTxn.save();
+
+                res.status(statusCode).json({ message: statusMessage });
+                return;
+            }
+        } else if(review.type === 'PAYMENT') {
+            if(req.userRole !== 'CUSTOMER') {
+                res.status(403).json({ error: 'Insufficient privilege to authorize merchant payment' });
+                return;
+            } else {
+                review.reviewer = req.userId;
+                review.status = 'APPROVED';
+                review.approvedBy.user = req.userId;
+                review.approvedBy.timestamp = new Date().toISOString();
+                await review.save();
+
+                const senderTxn = await Transaction.findById(review.reviewObject);
+                if(!senderTxn) {
+                    res.status(404).json({ error: 'Debit transaction not found' });
+                    return;
+                }
+
+                const beneficiaryTxn = await Transaction.findOne({ to: senderTxn?.to, review: review._id, type: 'CREDIT' });
                 if(!beneficiaryTxn) {
                     res.status(404).json({ error: 'Credit transaction not found' });
                     return;

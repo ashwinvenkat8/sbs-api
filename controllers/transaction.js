@@ -66,7 +66,7 @@ const createTransaction = async (req, res, next) => {
             from: sender._id,
             to: beneficiary._id,
             amount: req.body.amount,
-            message: req.body?.message,
+            message: req.body?.message || null,
             type: 'DEBIT',
             status: 'CREATED'
         });
@@ -75,7 +75,7 @@ const createTransaction = async (req, res, next) => {
             from: sender._id,
             to: beneficiary._id,
             amount: req.body.amount,
-            message: req.body?.message,
+            message: req.body?.message || null,
             type: 'CREDIT',
             status: 'CREATED'
         });
@@ -101,7 +101,7 @@ const createTransaction = async (req, res, next) => {
             await senderTxn.save();
             await beneficiaryTxn.save();
             
-            res.status(200).json({ message: 'High value transaction created and pending approval' });
+            res.status(201).json({ message: 'High value transaction created and pending approval' });
 
         // Regular transaction - debits sender and credits beneficiary immediately
         } else {
@@ -135,72 +135,133 @@ const createPayment = async (req, res, next) => {
         
         const fieldsToProject = { _id: 1, accountNumber: 1, user: 1, balance: 1 };
         const merchantAccount = await Account.findOne({ user: merchant._id }, fieldsToProject);
-        const sender = await Account.findOne({ user: req.userId }, fieldsToProject);
+        const customerAccount = await Account.findOne({ user: req.userId }, fieldsToProject);
 
-        let updatedSenderBalance = parseFloat(sender.balance) - parseFloat(req.body.amount);
-        if(updatedSenderBalance < 0) {
-            res.status(400).json({ error: 'Insufficient balance in sender\'s account' });
+        let updatedCustomerBalance = parseFloat(customerAccount.balance) - parseFloat(req.body.amount);
+        if(updatedCustomerBalance < 0) {
+            res.status(400).json({ error: 'Insufficient balance in customer\'s account' });
             return;
         }
 
-        const senderTxn = new Transaction({
-            from: sender._id,
+        const customerTxn = new Transaction({
+            from: customerAccount._id,
             to: merchantAccount._id,
             amount: req.body.amount,
-            message: req.body?.message,
+            message: req.body?.message || null,
             type: 'DEBIT',
             status: 'CREATED'
         });
 
         const merchantTxn = new Transaction({
-            from: sender._id,
+            from: customerAccount._id,
             to: merchantAccount._id,
             amount: req.body.amount,
-            message: req.body?.message,
+            message: req.body?.message || null,
             type: 'CREDIT',
             status: 'CREATED'
         });
 
         // High-value transaction - creates a review and sets transaction status to 'PENDING APPROVAL'
-        if(parseFloat(req.body.amount) >= 50000) {
-            senderTxn.status = 'PENDING APPROVAL';
+        if(parseFloat(req.body.amount) >= 1000) {
+            customerTxn.status = 'PENDING APPROVAL';
             merchantTxn.status = 'PENDING APPROVAL';
             
-            await Account.updateOne({ _id: sender._id }, { $push: { transactions: senderTxn._id }});
+            await Account.updateOne({ _id: customerAccount._id }, { $push: { transactions: customerTxn._id }});
             await Account.updateOne({ _id: merchantAccount._id }, { $push: { transactions: merchantTxn._id }});
             
             const newReview = new Review({
-                reviewObject: senderTxn._id,
+                reviewObject: customerTxn._id,
                 type: 'HIGH VALUE TXN',
                 status: 'PENDING APPROVAL'
             });
             const savedReview = await newReview.save();
             
-            senderTxn.review = savedReview._id;
+            customerTxn.review = savedReview._id;
             merchantTxn.review = savedReview._id;
 
-            await senderTxn.save();
+            await customerTxn.save();
             await merchantTxn.save();
             
-            res.status(200).json({ message: 'High value transaction created and pending approval' });
+            res.status(201).json({ message: 'High value transaction created and pending approval' });
 
         // Regular transaction - debits sender and credits merchant immediately
         } else {
-            let { statusCode, statusMessage, txnStatus } = await doTransaction(sender, merchantAccount, req.body.amount);
+            let { statusCode, statusMessage, txnStatus } = await doTransaction(customerAccount, merchantAccount, req.body.amount);
 
-            senderTxn.status = txnStatus;
+            customerTxn.status = txnStatus;
             merchantTxn.status = txnStatus;
 
-            const savedSenderTxn = await senderTxn.save();
+            const savedCustomerTxn = await customerTxn.save();
             const savedMerchantTxn = await merchantTxn.save();
 
-            await Account.updateOne({ _id: sender._id }, { $push: { transactions: savedSenderTxn._id }});
+            await Account.updateOne({ _id: customerAccount._id }, { $push: { transactions: savedCustomerTxn._id }});
             await Account.updateOne({ _id: merchantAccount._id }, { $push: { transactions: savedMerchantTxn._id }});
 
             res.status(statusCode).json({ message: statusMessage });
         }
     } catch(err) {
         console.log("createPayment() @ controllers/transaction.js");
+        next(err);
+    }
+};
+
+const requestPayment = async (req, res, next) => {
+    try {
+        if(!req.body?.accountNumber || !req.body?.amount) {
+            res.status(400).json({ error: 'Incomplete payment request' });
+            return;
+        }
+
+        const customerAccount = await Account.findOne({ accountNumber: req.body.accountNumber }, { _id: 1, user: 1, accountNumber: 1 });
+        if(!customerAccount) {
+            res.status(404).json({ error: 'Customer not found' });
+            return;
+        }
+
+        const merchantAccount = await Account.findOne({ user: req.userId }, { _id: 1 });
+        if(!merchantAccount) {
+            res.status(404).json({ error: 'Merchant not found' });
+            return;
+        }
+
+        const customerTxn = new Transaction({
+            from: customerAccount._id,
+            to: merchantAccount._id,
+            amount: req.body?.amount,
+            message: req.body?.message || null,
+            type: 'DEBIT',
+            status: 'PENDING APPROVAL'
+        });
+
+        const merchantTxn = new Transaction({
+            from: customerAccount._id,
+            to: merchantAccount._id,
+            amount: req.body?.amount,
+            message: req.body?.message || null,
+            type: 'CREDIT',
+            status: 'PENDING APPROVAL'
+        });
+
+        await Account.updateOne({ _id: customerAccount._id }, { $push: { transactions: customerTxn._id }});
+        await Account.updateOne({ _id: merchantAccount._id }, { $push: { transactions: merchantTxn._id }});
+
+        const newReview = new Review({
+            reviewer: customerAccount._id,
+            reviewObject: customerTxn._id,
+            type: 'PAYMENT',
+            status: 'PENDING APPROVAL'
+        });
+        const savedReview = await newReview.save();
+
+        customerTxn.review = savedReview._id;
+        merchantTxn.review = savedReview._id;
+
+        await customerTxn.save();
+        await merchantTxn.save();
+
+        res.status(201).json({ message: 'Payment request created and pending approval' });
+    } catch(err) {
+        console.log("requestPayment() @ controllers/transaction.js");
         next(err);
     }
 };
@@ -306,6 +367,7 @@ module.exports = {
     doTransaction,
     createTransaction,
     createPayment,
+    requestPayment,
     getAllTransactions,
     getUserTransactions,
     getTransaction,
