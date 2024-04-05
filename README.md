@@ -5,7 +5,7 @@ Built with **Express.js 4.18.3**
 ### Project setup
 1. Create a `.env` file and add the following:
     ```
-    APP_ENV=<ENV>
+    NODE_ENV=<ENV>
     APP_PORT=<PORT>
     API_BASE=<VERSIONED_API_BASE_PATH>
     HEALTHCHECK=<HEALTHCHECK_API_BASE_PATH>
@@ -13,7 +13,7 @@ Built with **Express.js 4.18.3**
     SECRET_KEY=<YOUR_SECRET>
     ```
     where:
-    - `APP_ENV` = `dev` or `prod`.
+    - `NODE_ENV` = `development` or `production`.
     - `APP_PORT` = `5000` or any other available port.
     - `API_BASE` = `/api/v1`.
     - `HEALTHCHECK` = `http://localhost:5000/api/v1/status`.
