@@ -2,6 +2,9 @@ const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
+const morgan = require('morgan');
+const path = require('path');
+const { slowDown } = require('express-slow-down');
 
 const connectDb = require('./mongo/connectDb');
 const authRoutes = require('./routes/auth');
