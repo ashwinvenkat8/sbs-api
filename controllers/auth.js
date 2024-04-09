@@ -65,7 +65,7 @@ const register = async (req, res, next) => {
             await newAccount.save();
         }
 
-        res.status(201).json({ message: 'User registered successfully' });
+        res.status(201).json({ user: newUser._id });
 
     } catch (err) {
         next(err);
@@ -93,30 +93,7 @@ const login = async (req, res, next) => {
             return;
         }
 
-        let jwtPayload = {
-            userId: userInDb._id,
-            role: userInDb.role
-        };
-
-        if(['CUSTOMER', 'MERCHANT'].includes(userInDb.role)) {
-            const accountId = await Account.findOne({ user: userInDb._id }, { _id: 1 });
-            jwtPayload.accountId = accountId._id;
-        }
-
-        const currentSession = {
-            sessionId: crypto.randomUUID(),
-            token: jwt.sign(jwtPayload, process.env.SECRET_KEY, { expiresIn: '30m' })
-        };
-
-        const filter = { _id: userInDb._id };
-        const update = {
-            $push: { sessions: currentSession },
-            $set: { last_login: new Date().toISOString() }
-        };
-
-        await User.updateOne(filter, update);
-
-        res.json({ token: currentSession.token });
+        res.status(200).json({ user: userInDb._id });
 
     } catch (err) {
         next(err);
@@ -145,14 +122,8 @@ const __generateRandomBase32 = () => {
 
 const generateQR = async (req, res, next) => {
     try {
-        const userId = req.userId;
-        if (!userId) {
-            res.status(400).send({ error: "Required parameters are missing" });
-            return;
-        }
+        const user = await User.findOne({ _id: req.userId });
 
-        const user = await User.findOne({ _id: userId });
-        
         if (!user) {
             res.status(404).send({ error: "User not found" });
             return;
@@ -167,9 +138,9 @@ const generateQR = async (req, res, next) => {
             digits: 8,
             secret: otpSecret,
         });
-        
+
         await User.updateOne(
-            { _id: userId },
+            { _id: req.userId },
             { $set: { 'otp.secret': otpSecret }}
         );
         
@@ -227,22 +198,20 @@ const verifyOTP = async (req, res, next) => {
 // Validate subsequent OTPs while performing sensitive operations
 const validateOTP = async (req, res) => {
     try {
-        const userId = req.userId;
-        const token = req.body.token;
-        
-        if (!userId || !token) {
-            res.status(400).send({ error: 'Required parameters are missing' });
-            return;
-        }
-        
-        const user = await User.findOne({ _id: userId });
-        if (!user) {
+        const user = req.user;
+        if(!user) {
             res.status(404).send({ error: 'User not found' });
             return;
         }
 
         if(!user.otp.isVerified) {
             res.status(401).send({ error: 'Incomplete 2FA enrollment' });
+            return;
+        }
+
+        const token = req.body.token;
+        if(!token) {
+            res.status(400).send({ error: 'OTP is required' });
             return;
         }
 
@@ -260,7 +229,29 @@ const validateOTP = async (req, res) => {
             res.status(401).send(false);
             return;
         } else {
-            res.status(200).send(true);
+            let jwtPayload = {
+                userId: user._id,
+                role: user.role
+            };
+
+            if(['CUSTOMER', 'MERCHANT'].includes(user.role)) {
+                const accountId = await Account.findOne({ user: user._id }, { _id: 1 });
+                jwtPayload.accountId = accountId._id;
+            }
+
+            const currentSession = {
+                sessionId: crypto.randomUUID(),
+                token: jwt.sign(jwtPayload, process.env.SECRET_KEY, { expiresIn: '30m' })
+            };
+
+            const filter = { _id: user._id };
+            const update = {
+                $push: { sessions: currentSession },
+                $set: { last_login: new Date().toISOString() }
+            };
+            await User.updateOne(filter, update);
+
+            res.json({ token: currentSession.token });
             return;
         }
 

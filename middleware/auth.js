@@ -59,6 +59,41 @@ const authenticate = async (req, res, next) => {
     }
 };
 
+const canValidateOTP = async(req, res, next) => {
+    const user = req.headers['x-user'];
+    if (!user) {
+        res.status(401).json({ message: 'Unauthenticated' });
+        return;
+    }
+
+    try {
+        const userInDb = await User.findById(user);
+
+        if (!userInDb) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        
+        req.user = userInDb;
+        next();
+        
+    } catch(err) {
+        console.log("authenticate() @ middleware/auth.js");
+        next(err);
+    }
+};
+
+const isRegistered = async (req, res, next) => {
+    const user = req.headers['x-user'];
+    if(!user) {
+        res.status(403).json({ message: 'User not registered' });
+        return;
+    }
+    
+    req.userId = user;
+    next();
+};
+
 const isEmployee = async (req, res, next) => {
     const token = req.headers?.authorization;
     if(!token) {
@@ -294,6 +329,8 @@ const isReviewApproved = async (req, res, next) => {
 
 module.exports = {
     authenticate,
+    canValidateOTP,
+    isRegistered,
     isEmployee,
     isSysAdmin,
     isNotSysAdmin,
