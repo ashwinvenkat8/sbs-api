@@ -22,7 +22,7 @@ const router = express.Router();
 router.all('*', authenticate);
 
 router.get('/all', isSysAdmin, getAllReviews);
-router.get('/filter', isSysAdminOrSysMgr, getReviewsByTypeAndStatus);
+router.get('/filter', getReviewsByTypeAndStatus);
 router.get('/approved/:id', isSysAdminOrSysMgr, getApprovedReview);
 
 router.route('/:id')

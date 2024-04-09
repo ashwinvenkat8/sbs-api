@@ -28,11 +28,13 @@ app.set('case sensitive routing', true); // ensures strict routing
 app.set('x-powered-by', false); // reduce what can be fingerprinted about the server/app
 
 // Rate limiter middleware
-app.use(slowDown({
-    windowMs: 15 * 60000, // 15 minutes
-    delayAfter: 20, // allow 20 requests per window without delay
-    delayMs: (hits) => hits * 100, // delay subsequent requests by 100ms each
-}));
+if(process.env.NODE_ENV === 'production') {
+    app.use(slowDown({
+        windowMs: 15 * 60000, // 15 minutes
+        delayAfter: 20, // allow 20 requests per window without delay
+        delayMs: (hits) => hits * 100, // delay subsequent requests by 100ms each
+    }));
+}
 
 // Cross-origin resource sharing middleware
 app.use(cors({
