@@ -14,7 +14,7 @@ const AccountSchema = new mongoose.Schema({
         type: mongoose.Types.Decimal128,
         default: new mongoose.Types.Decimal128('0.0'),
         min: 0,
-        get: v => parseFloat(v)
+        get: v => parseFloat(v.toString()),
     },
     transactions: [{
         type: mongoose.Types.ObjectId,
@@ -26,7 +26,7 @@ const AccountSchema = new mongoose.Schema({
         ref: 'Review',
         default: null
     }
-}, { timestamps: true });
+}, { toJSON: { getters: true }, timestamps: true });
 
 const Account = mongoose.model('Account', AccountSchema);
 

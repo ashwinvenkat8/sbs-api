@@ -14,7 +14,7 @@ const getAllReviews = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(reviews);
+        res.status(200).json(reviews.toJSON());
 
     } catch(err) {
         console.log("getAllReviews() @ controllers/review.js");
@@ -45,7 +45,7 @@ const getReviewsByTypeAndStatus = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(reviews);
+        res.status(200).json(reviews.toJSON());
 
     } catch(err) {
         console.log("getReviewsByTypeAndStatus() @ controllers/review.js");
@@ -73,7 +73,7 @@ const getApprovedReview = async (req, res, next) => {
                 if(!transactions) {
                     res.status(404).json( { error: 'Transactions not found' });
                 } else {
-                    res.status(200).json(transactions);
+                    res.status(200).json(transactions.toJSON());
                 }
                 
                 break;
@@ -85,7 +85,7 @@ const getApprovedReview = async (req, res, next) => {
                 if(!profile) {
                     res.status(404).json( { error: 'Profile not found' });
                 } else {
-                    res.status(200).json(profile);
+                    res.status(200).json(profile.toJSON());
                 }
                 
                 break;
@@ -97,7 +97,7 @@ const getApprovedReview = async (req, res, next) => {
                 if(!account) {
                     res.status(404).json( { error: 'Account not found' });
                 } else {
-                    res.status(200).json(account);
+                    res.status(200).json(account.toJSON());
                 }
                 
                 break;
@@ -121,7 +121,7 @@ const getReview = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(review);
+        res.status(200).json(review.toJSON());
 
     } catch(err) {
         console.log("getReview() @ controllers/review.js");

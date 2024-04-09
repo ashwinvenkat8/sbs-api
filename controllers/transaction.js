@@ -281,7 +281,7 @@ const getAllTransactions = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(transactions);
+        res.status(200).json(transactions.toJSON());
 
     } catch(err) {
         console.log("getAllTransactions() @ controllers/transaction.js");
@@ -298,7 +298,7 @@ const getUserTransactions = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(transactions);
+        res.status(200).json(transactions.toJSON());
 
     } catch(err) {
         console.log("getUserTransactions() @ controllers/transaction.js");
@@ -315,7 +315,7 @@ const getTransaction = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(transaction);
+        res.status(200).json(transaction.toJSON());
 
     } catch(err) {
         console.log("getTransaction() @ controllers/transaction.js");

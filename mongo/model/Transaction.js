@@ -54,7 +54,7 @@ const TransactionSchema = new mongoose.Schema({
         ref: 'User',
         default: null
     }
-}, { timestamps: true });
+}, { toJSON: { getters: true }, timestamps: true });
 
 const Transaction = mongoose.model('Transaction', TransactionSchema);
 
