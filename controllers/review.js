@@ -25,7 +25,7 @@ const getAllReviews = async (req, res, next) => {
 const getReviewsByTypeAndStatus = async (req, res, next) => {
     try {
         const validStatus = ['PENDING APPROVAL', 'APPROVED', 'REJECTED'];
-        const validType = ['HIGH VALUE TXN', 'TRANSACTION', 'PROFILE', 'ACCOUNT'];
+        const validType = ['HIGH VALUE TXN', 'PAYMENT', 'TRANSACTION', 'PROFILE', 'ACCOUNT'];
         const reviewStatus = req.query?.status;
         const reviewType = req.query?.type;
 
