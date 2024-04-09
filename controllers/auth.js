@@ -93,12 +93,19 @@ const login = async (req, res, next) => {
             return;
         }
 
+        let jwtPayload = {
+            userId: userInDb._id,
+            role: userInDb.role
+        };
+
+        if(['CUSTOMER', 'MERCHANT'].includes(userInDb.role)) {
+            const accountId = await Account.findOne({ user: userInDb._id }, { _id: 1 });
+            jwtPayload.accountId = accountId._id;
+        }
+
         const currentSession = {
             sessionId: crypto.randomUUID(),
-            token: jwt.sign({
-                userId: userInDb._id,
-                role: userInDb.role
-            }, process.env.SECRET_KEY, { expiresIn: '30m' })
+            token: jwt.sign(jwtPayload, process.env.SECRET_KEY, { expiresIn: '30m' })
         };
 
         const filter = { _id: userInDb._id };

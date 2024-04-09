@@ -13,10 +13,14 @@ const authenticate = async (req, res, next) => {
     try {
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
         const userInDb = await User.exists({ _id: decodedToken.userId });
-
+        
         if (!userInDb) {
             res.status(404).json({ message: 'User not found' });
             return;
+        }
+
+        if(['CUSTOMER', 'MERCHANT'].includes(userInDb.role)) {
+            req.accountId = decodedToken.accountId;
         }
 
         req.userId = decodedToken.userId;
