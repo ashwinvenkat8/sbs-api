@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const User = require('../mongo/model/User');
+const Review = require('../mongo/model/Review');
 
 const authenticate = async (req, res, next) => {
     const token = req.headers?.authorization;
@@ -256,7 +257,7 @@ const isSysAdminOrSysMgr = async (req, res, next) => {
 };
 
 const isReviewApproved = async (req, res, next) => {
-    const reviewId = req.headers?.x-review-id;
+    const reviewId = req.headers['x-review-id'];
     
     if(!reviewId) {
         res.status(400).json({ message: 'Active review required to access this resource' });
