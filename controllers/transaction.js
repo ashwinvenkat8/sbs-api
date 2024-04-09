@@ -291,7 +291,18 @@ const getAllTransactions = async (req, res, next) => {
 
 const getUserTransactions = async (req, res, next) => {
     try {
-        let transactions = await Account.findOne({ user: req.reviewee }, { transactions: 1 });
+        let filter = null;
+        if(!req.reviewee) {
+            filter = { user: req.userId };
+        } else {
+            filter = { user: req.reviewee };
+        }
+
+        const transactions = await Account.findOne(filter, { transactions: 1 })
+            .populate({
+                path: 'transactions',
+                select: '-review'
+            }).exec();
 
         if(!transactions) {
             res.status(404).status({ error: 'No transactions found' });

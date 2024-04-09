@@ -13,6 +13,7 @@ const {
 const {
     authenticate,
     isEmployee,
+    isExternal,
     isSysMgr,
     isNotSysAdmin,
     isReviewApproved,
@@ -27,6 +28,7 @@ const router = express.Router();
 router.all('*', authenticate);
 
 router.get('/all', isSysAdminOrSysMgr, getAllTransactions);
+router.get('/myTxns', isExternal, getUserTransactions);
 router.get('/:userId/all', isSysMgr, isReviewApproved, getUserTransactions);
 
 router.post('/new', isExternalOrEmployee, createTransaction);
