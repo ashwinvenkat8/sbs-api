@@ -24,6 +24,7 @@ connectDb();
 const app = express();
 
 // App settings
+app.set('trust proxy', 1); // trust first proxy
 app.set('case sensitive routing', true); // ensures strict routing
 app.set('x-powered-by', false); // reduce what can be fingerprinted about the server/app
 

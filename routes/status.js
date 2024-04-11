@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', appStatus);
 router.get('/auth', apiStatus);
+router.get('/review', apiStatus);
 router.get('/transaction', apiStatus);
 router.get('/user', apiStatus);
 
