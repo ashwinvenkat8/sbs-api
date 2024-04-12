@@ -157,8 +157,6 @@ const verifyOTP = async (req, res, next) => {
         const userId = req.userId;
         const token = req.body.token;
 
-        console.log(req)
-        
         if (!userId || !token) {
             res.status(400).send({ error: 'Required parameters are missing' });
             return;

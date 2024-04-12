@@ -73,7 +73,6 @@ app.use((err, req, res, next) => {
     if(process.env.NODE_ENV === 'production') {
         console.log(`\n${err.name}: ${err.message}`);
     } else {
-        console.debug(`\nRequest:\n\tLength: ${req.length}\n\tHeaders: ${req.headers}\n\tPayload: ${req.body}`);
         console.debug(`\nStack trace: ${err.stack}`);
     }
 
