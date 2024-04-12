@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const OTPAuth = require("otpauth");
@@ -47,8 +47,8 @@ const register = async (req, res, next) => {
                 payment_id: crypto.randomBytes(16).toString('base64url')
             }
         }
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         let newUser = new User({
             email: email,
