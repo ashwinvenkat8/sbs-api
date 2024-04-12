@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const OTPAuth = require("otpauth");
@@ -47,8 +47,8 @@ const register = async (req, res, next) => {
                 payment_id: crypto.randomBytes(16).toString('base64url')
             }
         }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         let newUser = new User({
             email: email,
@@ -156,6 +156,8 @@ const verifyOTP = async (req, res, next) => {
     try {
         const userId = req.userId;
         const token = req.body.token;
+
+        console.log(req)
         
         if (!userId || !token) {
             res.status(400).send({ error: 'Required parameters are missing' });
