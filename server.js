@@ -32,7 +32,7 @@ app.set('x-powered-by', false); // reduce what can be fingerprinted about the se
 if(process.env.NODE_ENV === 'production') {
     app.use(slowDown({
         windowMs: 15 * 60000, // 15 minutes
-        delayAfter: 20, // allow 20 requests per window without delay
+        delayAfter: 100, // allow 20 requests per window without delay
         delayMs: (hits) => hits * 100, // delay subsequent requests by 100ms each
     }));
 }
