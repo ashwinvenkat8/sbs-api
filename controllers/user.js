@@ -98,16 +98,28 @@ const updateProfile = async (req, res, next) => {
             return;
         }
 
+        delete req.body.username;
         delete req.body.email;
         delete req.body.password;
         delete req.body.otp;
         delete req.body.role;
         delete req.body.sessions;
         delete req.body.last_login;
+        delete req.body.attributes.ssn;
+        delete req.body.attributes.date_of_birth;
 
+        const updatedProfile = {
+            attributes: userInDb.attributes
+        };
         const validatedUserData = await User.validate(req.body);
-        
-        const userUpdate = await User.updateOne({ _id: req.params.id }, validatedUserData);
+
+        for (const [key, value] of Object.entries(validatedUserData.attributes)) {
+            if(value) {
+                updatedProfile.attributes[key] = value;
+            }
+        }
+
+        const userUpdate = await User.updateOne({ _id: req.params.id }, updatedProfile);
 
         if(!userUpdate.acknowledged || userUpdate.modifiedCount !== 1) {
             res.status(500).json({ message: 'User profile update failed' });
