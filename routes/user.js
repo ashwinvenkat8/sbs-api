@@ -31,7 +31,7 @@ router.route('/account/:id')
 router.get('/profile/all', isSysAdmin, getAllProfiles);
 router.get('/profile/review/:id', isSysAdminOrSysMgr, isReviewApproved, getProfile);
 router.route('/profile/:id')
-    .get(isExternal, getProfile)
+    .get(getProfile)
     .patch(isExternal, updateProfile)
     .delete(isSysAdmin, deleteProfile);
 
