@@ -2,7 +2,7 @@ const express = require('express');
 
 const {
     getAllReviews,
-    getReviewsByTypeAndStatus,
+    getReviewsByFilter,
     getReview,
     updateReview,
     deleteReview,
@@ -22,7 +22,7 @@ const router = express.Router();
 router.all('*', authenticate);
 
 router.get('/all', isSysAdmin, getAllReviews);
-router.get('/filter', getReviewsByTypeAndStatus);
+router.get('/filter', getReviewsByFilter);
 router.get('/approved/:id', isSysAdminOrSysMgr, getApprovedReview);
 
 router.route('/:id')

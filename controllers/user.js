@@ -64,7 +64,7 @@ const getAllProfiles = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(profiles.toJSON());
+        res.status(200).json(profiles);
 
     } catch(err) {
         console.log("getAllProfiles() @ controllers/user.js");
@@ -81,7 +81,7 @@ const getProfile = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(user.toJSON());
+        res.status(200).json(user);
 
     } catch(err) {
         console.log("getProfile() @ controllers/user.js");
@@ -153,7 +153,7 @@ const getPaymentId = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json({ message: paymentId.toJSON() });
+        res.status(200).json({ message: paymentId });
 
     } catch(err) {
         console.log("getPaymentId() @ controllers/user.js");

@@ -14,7 +14,7 @@ const getAllReviews = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(reviews.toJSON());
+        res.status(200).json(reviews);
 
     } catch(err) {
         console.log("getAllReviews() @ controllers/review.js");
@@ -22,33 +22,86 @@ const getAllReviews = async (req, res, next) => {
     }
 };
 
-const getReviewsByTypeAndStatus = async (req, res, next) => {
+const getReviewsByFilter = async (req, res, next) => {
     try {
         const validStatus = ['PENDING APPROVAL', 'APPROVED', 'REJECTED'];
         const validType = ['HIGH VALUE TXN', 'PAYMENT', 'TRANSACTION', 'PROFILE', 'ACCOUNT'];
+        let filter = {};
+        
         const reviewStatus = req.query?.status;
         const reviewType = req.query?.type;
+        const reviewer = req.query?.reviewer;
+        const reviewObject = req.query?.reviewObject;
 
-        if(!validStatus.includes(reviewStatus)) {
-            res.status(400).json({ error: 'Invalid review status' });
+        if(reviewStatus) {
+            if(!validStatus.includes(reviewStatus)) {
+                res.status(400).json({ error: 'Invalid review status' });
+                return;
+            }
+            filter['status'] = reviewStatus;
+        }
+        
+        if(reviewType) {
+            if(!validType.includes(reviewType)) {
+                res.status(400).json({ error: 'Invalid review type' });
+                return;
+            }
+            filter['type'] = reviewType;
+        }
+        
+        if(reviewer) {
+            if(!await User.exists({ _id: reviewer })) {
+                res.status(400).json({ error: 'Reviewer not found' });
+                return;
+            }
+            filter['reviewer'] = reviewer;
+        }
+        
+        if(reviewObject) {
+            switch(reviewType) {
+                case 'ACCOUNT':
+                case 'TRANSACTION': {
+                    if(!await Account.exists({ _id: reviewObject })) {
+                        res.status(400).json({ error: 'Account not found' });
+                        return;
+                    }
+                    break;
+                }
+                case 'HIGH VALUE TXN':
+                case 'PAYMENT': {
+                    if(!await Transaction.exists({ _id: reviewObject })) {
+                        res.status(400).json({ error: 'Transaction not found' });
+                        return;
+                    }
+                    break;
+                }
+                case 'PROFILE': {
+                    if(!await User.exists({ _id: reviewObject })) {
+                        res.status(400).json({ error: 'User not found' });
+                        return;
+                    }
+                    break;
+                }
+            }
+            filter['reviewObject'] = reviewObject;
+        }
+
+        if(Object.keys(filter).length === 0 && filter.constructor === Object) {
+            res.status(400).json({ error: 'No filters provided' });
             return;
         }
-        if(!validType.includes(reviewType)) {
-            res.status(400).json({ error: 'Invalid review type' });
-            return;
-        }
 
-        const reviews = await Review.find({ status: reviewStatus, type: reviewType });
+        const reviews = await Review.find(filter);
         
         if(!reviews) {
             res.status(404).json({ error: `No ${reviewStatus.toLowerCase()} ${reviewType.toLowerCase()} reviews found` });
             return;
         }
 
-        res.status(200).json(reviews.toJSON());
+        res.status(200).json(reviews);
 
     } catch(err) {
-        console.log("getReviewsByTypeAndStatus() @ controllers/review.js");
+        console.log("getReviewsByFilter() @ controllers/review.js");
         next(err);
     }
 };
@@ -85,7 +138,7 @@ const getApprovedReview = async (req, res, next) => {
                 if(!profile) {
                     res.status(404).json( { error: 'Profile not found' });
                 } else {
-                    res.status(200).json(profile.toJSON());
+                    res.status(200).json(profile);
                 }
                 
                 break;
@@ -121,7 +174,7 @@ const getReview = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(review.toJSON());
+        res.status(200).json(review);
 
     } catch(err) {
         console.log("getReview() @ controllers/review.js");
@@ -375,7 +428,7 @@ const rejectReview = async (req, res, next) => {
 
 module.exports = {
     getAllReviews,
-    getReviewsByTypeAndStatus,
+    getReviewsByFilter,
     getApprovedReview,
     getReview,
     updateReview,
