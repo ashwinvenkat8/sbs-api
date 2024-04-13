@@ -268,13 +268,15 @@ const requestPayment = async (req, res, next) => {
 
 const getAllTransactions = async (req, res, next) => {
     try {
-        let transactions = null;
-
-        if (req.userRole === 'SYSTEM_MANAGER' || req.userRole === 'SYSTEM_ADMIN') {
-            transactions = await Transaction.find({});
-        } else {
-            transactions = await Account.findOne({ user: req.userId }, { transactions: 1 });
-        }
+        const transactions = await Transaction.find({})
+            .populate({
+                path: 'from to',
+                select: `accountNumber`,
+                populate: {
+                    path: 'user',
+                    select: '-_id attributes.first_name attributes.last_name'
+                }
+            }).exec();
 
         if(!transactions) {
             res.status(404).status({ error: 'No transactions found' });
@@ -301,7 +303,15 @@ const getUserTransactions = async (req, res, next) => {
         const transactions = await Account.findOne(filter, { transactions: 1 })
             .populate({
                 path: 'transactions',
-                select: '-review'
+                select: '-review',
+                populate: {
+                    path: 'from to',
+                    select: `accountNumber`,
+                    populate: {
+                        path: 'user',
+                        select: '-_id attributes.first_name attributes.last_name'
+                    }
+                }
             }).exec();
 
         if(!transactions) {
@@ -319,7 +329,15 @@ const getUserTransactions = async (req, res, next) => {
 
 const getTransaction = async (req, res, next) => {
     try {
-        const transaction = await Transaction.findById(req.params.id);
+        const transaction = await Transaction.findById(req.params.id)
+            .populate({
+                path: 'from to',
+                select: `accountNumber`,
+                populate: {
+                    path: 'user',
+                    select: '-_id attributes.first_name attributes.last_name'
+                }
+            }).exec();
 
         if(!transaction) {
             res.status(404).json({ error: 'Transaction not found' });
