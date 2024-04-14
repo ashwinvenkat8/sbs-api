@@ -283,7 +283,7 @@ const getAllTransactions = async (req, res, next) => {
             return;
         }
 
-        res.status(200).json(transactions.toJSON());
+        res.status(200).json(transactions);
 
     } catch(err) {
         console.log("getAllTransactions() @ controllers/transaction.js");
