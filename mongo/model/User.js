@@ -65,6 +65,28 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+    login_failed: {
+        count: {
+            type: Number,
+            default: 0
+        },
+        last_failure: {
+            type: Date,
+            default: null
+        },
+        is_notified: {
+            type: Boolean,
+            default: false
+        }
+    },
+    is_locked: {
+        type: Boolean,
+        default: false
+    },
+    is_inactive: {
+        type: Boolean,
+        default: false
+    },
     review: {
         type: mongoose.Types.ObjectId,
         ref: 'Review',

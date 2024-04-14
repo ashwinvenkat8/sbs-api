@@ -72,20 +72,83 @@ const register = async (req, res, next) => {
     }
 };
 
+async function __updateLoginFailed(id, count=0, lastFailure=null, isNotified=false) {
+    const update = {
+        login_failed: {
+            count: count,
+            last_failure: lastFailure,
+            is_notified: isNotified
+        }
+    }
+
+    await User.updateOne({ _id: id }, update);
+    return;
+}
+
+async function __loginFailureHandler(failedCount, userInDb) {
+    if (failedCount >= 5) {
+        await __updateLoginFailed(userInDb._id, failedCount, new Date().toISOString(), true);
+        await User.updateOne({ _id: userInDb._id }, { is_locked: true });
+        console.log(`Account locked: ${userInDb._id}`);
+        
+        return 'Too many failed login attempts. For your safety, your account has been locked. Please get in touch with your home branch to restore access.';
+
+    } else if (failedCount >= 3) {
+
+        if (Date.now() >= (userInDb.login_failed.last_failure.getTime() + 5*60000)) {
+            return '';
+        }
+
+        if(userInDb.login_failed.is_notified) {
+            return `Try again at ${
+                new Date(userInDb.login_failed.last_failure.getTime() + 6*60000
+                ).toLocaleTimeString('en-US', { timeStyle: 'short' })
+            } (5 minutes). You will have 2 more attempts before your account is locked.`;
+        }
+
+        await __updateLoginFailed(userInDb._id, failedCount, new Date().toISOString(), true);
+        return `${failedCount} unsuccessful login attempts. Please try again after 5 minutes.`;
+
+    } else {
+        return '';
+    }
+}
+
 const login = async (req, res, next) => {
     const { username, password } = req.body;
 
     try {
         const userInDb = await User.findOne({ username });
-        if (!userInDb) {
+        if (!userInDb || userInDb.is_inactive) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
 
-        const passwordMatch = await userInDb.comparePassword(password);
-        if (!passwordMatch) {
-            res.status(401).json({ error: 'Incorrect password' });
+        if(userInDb.is_locked) {
+            res.status(401).json({ error: 'Your account is locked. Please get in touch with your home branch to restore access.' });
             return;
+        }
+
+        const passwordMatch = await userInDb.comparePassword(password);
+
+        if (!passwordMatch) {
+            const updatedFailedCount = userInDb.login_failed.count + 1;
+
+            const errorMsg = await __loginFailureHandler(updatedFailedCount, userInDb);
+            if(errorMsg) {
+                res.status(401).json({ error: errorMsg });
+                return;
+            }
+
+            await __updateLoginFailed(userInDb._id, updatedFailedCount, new Date().toISOString(), false);
+
+            res.status(401).json({ error: 'Incorrect credentials' });
+            return;
+        }
+
+        if(userInDb.login_failed.count > 0) {
+            await __updateLoginFailed(userInDb._id, 0, null, false);
+            console.log(`login_failed reset for ${userInDb._id}`);
         }
 
         if (userInDb.sessions.length >= 3) {

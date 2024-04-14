@@ -98,15 +98,18 @@ const updateProfile = async (req, res, next) => {
             return;
         }
 
-        delete req.body.username;
         delete req.body.email;
+        delete req.body.username;
         delete req.body.password;
         delete req.body.otp;
         delete req.body.role;
-        delete req.body.sessions;
-        delete req.body.last_login;
         delete req.body.attributes.ssn;
         delete req.body.attributes.date_of_birth;
+        delete req.body.sessions;
+        delete req.body.last_login;
+        delete req.body.login_failed;
+        delete req.body.is_locked;
+        delete req.body.is_inactive;
 
         const updatedProfile = {
             attributes: userInDb.attributes
@@ -136,7 +139,7 @@ const updateProfile = async (req, res, next) => {
 
 const deleteProfile = async (req, res, next) => {
     try {
-        await User.deleteOne({ _id: req.params.id });
+        await User.updateOne({ _id: req.params.id }, { is_inactive: true });
         res.status(200).json({ message: 'User profile deleted' });
     } catch(err) {
         console.log("deleteProfile() @ controllers/user.js");
