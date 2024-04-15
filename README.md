@@ -11,6 +11,7 @@ Built with **Express.js 4.18.3**
     HEALTHCHECK=<HEALTHCHECK_API_BASE_PATH>
     MONGO_URI=<DB_CONNECTION_STRING>
     SECRET_KEY=<YOUR_SECRET>
+    CORS_ORIGIN=<FRONTEND_DOMAIN>
     ```
     where:
     - `NODE_ENV` = `development` or `production`.
@@ -19,6 +20,7 @@ Built with **Express.js 4.18.3**
     - `HEALTHCHECK` = `http://localhost:5000/api/v1/status`.
     - `MONGO_URI` can be found in Atlas.
     - `SECRET_KEY` can be generated using `openssl`.
+    - `CORS_ORIGIN` must be the domain of the frontend service.
 
 2. Install dependencies: `npm install`
 
