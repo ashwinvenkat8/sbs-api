@@ -39,7 +39,7 @@ if(process.env.NODE_ENV === 'production') {
 
 // Cross-origin resource sharing middleware
 app.use(cors({
-    origin: `${CORS_ORIGIN}`,
+    origin: `${process.env.CORS_ORIGIN}`,
     credentials: true
 }));
 
