@@ -8,10 +8,12 @@ const {
     getProfile,
     updateProfile,
     deleteProfile,
+    getMerchants,
     getPaymentId
 } = require('../controllers/user');
 const {
     authenticate,
+    isCustomer,
     isExternal,
     isSysAdmin,
     isReviewApproved,
@@ -35,6 +37,7 @@ router.route('/profile/:id')
     .patch(isExternal, updateProfile)
     .delete(isSysAdmin, deleteProfile);
 
+router.get('/merchants', isCustomer, getMerchants);
 router.get('/payId/:id', getPaymentId);
 
 module.exports = router;

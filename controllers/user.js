@@ -147,6 +147,23 @@ const deleteProfile = async (req, res, next) => {
     }
 };
 
+const getMerchants = async (req, res, next) => {
+    try {
+        const merchants = await User.find({ role: 'MERCHANT' }, { 'attributes.business_name': 1, 'attributes.payment_id': 1 });
+        
+        if(merchants.length === 0) {
+            res.status(404).json({ message: 'No merchants found' });
+            return;
+        }
+
+        res.status(200).json(merchants);
+
+    } catch(err) {
+        console.log("getMerchants() @ controllers/user.js");
+        next(err);
+    }
+}
+
 const getPaymentId = async (req, res, next) => {
     try {
         const paymentId = await User.findById(req.params.id, { 'attributes.payment_id': 1 });
@@ -172,5 +189,6 @@ module.exports = {
     getProfile,
     updateProfile,
     deleteProfile,
+    getMerchants,
     getPaymentId
 };

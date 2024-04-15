@@ -64,6 +64,17 @@ const ReviewSchema = new mongoose.Schema({
             type: String,
             default: null
         }
+    },
+    createdBy: {
+        user: {
+            type: mongoose.Types.ObjectId,
+            ref: 'User',
+            default: null
+        },
+        timestamp: {
+            type: Date,
+            default: null
+        }
     }
 }, { timestamps: true });
 

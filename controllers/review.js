@@ -28,11 +28,20 @@ const getReviewsByFilter = async (req, res, next) => {
         const validType = ['HIGH VALUE TXN', 'PAYMENT', 'TRANSACTION', 'PROFILE', 'ACCOUNT'];
         let filter = {};
         
+        const createdBy = req.query?.createdBy;
         const reviewStatus = req.query?.status;
         const reviewType = req.query?.type;
         const reviewer = req.query?.reviewer;
         const reviewObject = req.query?.reviewObject;
 
+        if(createdBy) {
+            if(!await User.exists({ _id: createdBy })) {
+                res.status(400).json({ error: 'User not found' });
+                return;
+            }
+            filter['createdBy'] = createdBy;
+        }
+        
         if(reviewStatus) {
             if(!validStatus.includes(reviewStatus)) {
                 res.status(400).json({ error: 'Invalid review status' });
@@ -58,7 +67,7 @@ const getReviewsByFilter = async (req, res, next) => {
         }
         
         if(reviewObject) {
-            switch(reviewType) {
+            switch(reviewType.toUpperCase()) {
                 case 'ACCOUNT':
                 case 'TRANSACTION': {
                     if(!await Account.exists({ _id: reviewObject })) {
@@ -91,7 +100,26 @@ const getReviewsByFilter = async (req, res, next) => {
             return;
         }
 
-        const reviews = await Review.find(filter);
+        let reviews = null;
+
+        if(reviewType) {
+            reviews = await Review.find(filter)
+                .populate({
+                    path: 'reviewObject',
+                    ref: reviewType
+                })
+                .populate({
+                    path: 'reviewer approvedBy rejectedBy createdBy',
+                    select: '-_id attributes.first_name attributes.last_name'
+                }).exec();
+
+        } else {
+            reviews = await Review.find(filter)
+                .populate({
+                    path: 'reviewer approvedBy rejectedBy createdBy',
+                    select: '-_id attributes.first_name attributes.last_name'
+                }).exec();
+        }
         
         if(!reviews) {
             res.status(404).json({ error: `No ${reviewStatus.toLowerCase()} ${reviewType.toLowerCase()} reviews found` });
@@ -234,7 +262,8 @@ const requestReview = async (req, res, next) => {
             reviewer: validatedReviewData.reviewer,
             reviewObject: validatedReviewData.reviewObject,
             type: validatedReviewData.type,
-            status: 'PENDING APPROVAL'
+            status: 'PENDING APPROVAL',
+            createdBy: validatedReviewData.createdBy
         });
         await newReview.save();
 

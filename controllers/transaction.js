@@ -91,7 +91,11 @@ const createTransaction = async (req, res, next) => {
             const newReview = new Review({
                 reviewObject: senderTxn._id,
                 type: 'HIGH VALUE TXN',
-                status: 'PENDING APPROVAL'
+                status: 'PENDING APPROVAL',
+                createdBy: {
+                    user: sender.user,
+                    timestamp: new Date().toISOString()
+                }
             });
             const savedReview = await newReview.save();
             
@@ -172,7 +176,11 @@ const createPayment = async (req, res, next) => {
             const newReview = new Review({
                 reviewObject: customerTxn._id,
                 type: 'HIGH VALUE TXN',
-                status: 'PENDING APPROVAL'
+                status: 'PENDING APPROVAL',
+                createdBy: {
+                    user: customerAccount.user,
+                    timestamp: new Date().toISOString()
+                }
             });
             const savedReview = await newReview.save();
             
@@ -249,7 +257,11 @@ const requestPayment = async (req, res, next) => {
             reviewer: customerAccount._id,
             reviewObject: customerTxn._id,
             type: 'PAYMENT',
-            status: 'PENDING APPROVAL'
+            status: 'PENDING APPROVAL',
+            createdBy: {
+                user: merchantAccount.user,
+                timestamp: new Date().toISOString()
+            }
         });
         const savedReview = await newReview.save();
 
